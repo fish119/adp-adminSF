@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Divider, Table } from 'antd';
+import { Divider, Table, Icon,Card } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 const columns = [
@@ -8,62 +8,71 @@ const columns = [
     title: '菜单名称',
     dataIndex: 'name',
     key: 'name',
-    align:'center',
   },
   {
     title: '图标',
     dataIndex: 'icon',
     key: 'icon',
-    align:'center',
+    align: 'center',
+    render: icon => <Icon type={icon} />,
   },
   {
     title: '菜单URL',
     dataIndex: 'path',
     key: 'path',
-    align:'center',
+    align: 'center',
   },
   {
     title: '仅管理员可见',
     dataIndex: 'onlySa',
     key: 'onlySa',
-    align:'center',
+    align: 'center',
+    render:value=> value?'是':'否',
   },
   {
     title: '排序号',
     dataIndex: 'sort',
     key: 'sort',
-    align:'center',
+    align: 'center',
   },
   {
     title: '操作',
-    align:'center',
+    align: 'center',
     render: () => (
       <Fragment>
-        <a href="">编辑</a>
+        <a href="javascript:void(0);">编辑</a>
         <Divider type="vertical" />
-        <a href="">删除</a>
+        <a href="javascript:void(0);">删除</a>
       </Fragment>
     ),
   },
 ];
 
-@connect(({ global }) => ({
+@connect(({ global, menu, loading }) => ({
   userMenus: global.userMenus,
+  menu,
+  loading: loading.effects['menu/fetch'],
 }))
 export default class Menu extends PureComponent {
+  componentWillMount() {
+    this.props.dispatch({ type: 'menu/fetch' });
+  }
   render() {
-    const { userMenus, loading } = this.props;
+    const { userMenus, menu: { data }, loading } = this.props;
     return (
       <PageHeaderLayout userMenus={userMenus}>
-        <Table
-          // selectedRows={selectedRows}
-          loading={loading}
-          // data={data}
-          columns={columns}
-          // onSelectRow={this.handleSelectRows}
-          // onChange={this.handleStandardTableChange}
-        />
-      </PageHeaderLayout>
+        <Card bordered={false}>
+          <Table
+            // selectedRows={selectedRows}
+            loading={loading}
+            dataSource={data.list}
+            columns={columns}
+            rowKey="id"
+            // onSelectRow={this.handleSelectRows}
+            // onChange={this.handleStandardTableChange}
+          />
+        </Card>
+      </PageHeaderLayout>      
     );
   }
 }
