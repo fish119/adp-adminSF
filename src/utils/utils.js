@@ -159,3 +159,17 @@ const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-
 export function isUrl(path) {
   return reg.test(path);
 }
+
+function formatterTreeData(data) {
+  return data.map(dataItem => {
+    const result = {
+      label: dataItem.name || '',
+      value: dataItem.id.toString() || '',
+      key: dataItem.id || '',
+      children: formatterTree(dataItem.children),
+    };
+    return result;
+  });
+}
+
+export const formatterTree = data => formatterTreeData(data);
