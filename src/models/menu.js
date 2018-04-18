@@ -1,4 +1,4 @@
-import { getAllMenus } from '../services/api';
+import { getAllMenus, saveMenu } from '../services/api';
 
 export default {
   namespace: 'menu',
@@ -6,6 +6,7 @@ export default {
   state: {
     data: {
       list: [],
+      userMenus: [],
     },
   },
 
@@ -14,13 +15,23 @@ export default {
       const response = yield call(getAllMenus);
       yield put({ type: 'save', payload: response });
     },
+    *saveMenu({ payload, callback }, { call, put }) {
+      const response = yield call(saveMenu, payload);
+      if(response){
+        yield put({ type: 'save', payload: response })
+      }
+      if (callback&&response) {
+        yield callback(response);
+      }
+    },
   },
 
   reducers: {
     save(state, action) {
       return {
         ...state,
-        data: {list:action.payload.data},
+        data: { list: action.payload.data },
+        userMenus: action.payload.userMenus,
       };
     },
   },

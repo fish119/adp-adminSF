@@ -18,3 +18,11 @@ export async function getAllMenus() {
     method: 'GET',
   });
 }
+
+export async function saveMenu(params) {
+  const a = request('setting/menus', {
+    method: 'POST',
+    body: params,
+  });
+  return a;
+}

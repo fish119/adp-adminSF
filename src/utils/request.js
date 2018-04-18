@@ -73,7 +73,7 @@ export default function request(url, options) {
     }
   }
 
-  return fetch(baseUrl + url, newOptions).then(checkStatus).then(response => {
+  return fetch(baseUrl + url, newOptions).then(checkStatus).then(response => {    
     if (newOptions.method === 'DELETE' || response.status === 204) {
       return response.text();
     }
@@ -91,7 +91,7 @@ export default function request(url, options) {
     }
     if (status <= 504 && status >= 500) {
       dispatch(routerRedux.push('/exception/500'));
-      return;
+      return null;
     }
     if (status >= 404 && status < 422) {
       dispatch(routerRedux.push('/exception/404'));

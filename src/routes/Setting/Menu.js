@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Divider, Table, Icon,Card,Button,Form,Modal,Input,Radio,Slider,TreeSelect } from 'antd';
+import { Divider, Table, Icon,Card,Button,Form,Modal,Input,Radio,Slider,TreeSelect,message } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../layouts/TableList.less';
 import {formatterTree} from '../../utils/utils.js'
@@ -35,16 +35,15 @@ const CreateForm = Form.create({
     };
   },
 })(props => {
-  const { modalVisible, form, handleAdd, handleModalVisible ,item,treeData } = props;
+  const { modalVisible, form, handleSave, handleModalVisible ,item,treeData } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
-      handleAdd(fieldsValue);
+      handleSave(fieldsValue);
     });
   };
-  console.log(props.item);
-
+  
   return (
     <Modal
       title={item!=null?"编辑菜单":"新建菜单"}
@@ -55,12 +54,12 @@ const CreateForm = Form.create({
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="菜单名称">
         {form.getFieldDecorator('name', {
           rules: [{ required: true, message: '请输入菜单名称...' }],
-        })(<Input placeholder="请输入" />)}
+        })(<Input placeholder="请输入" maxLength="10" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="菜单URL">
         {form.getFieldDecorator('path', {
           rules: [{ required: true, message: '请输入菜单URL...' }],
-        })(<Input placeholder="请输入" />)}
+        })(<Input placeholder="请输入"  maxLength="10" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="菜单图标">
         {form.getFieldDecorator('icon',{})(<Input placeholder="请输入" addonBefore={<Icon type={item.icon} />} />)}
@@ -74,10 +73,11 @@ const CreateForm = Form.create({
             placeholder="Please select"
             treeDefaultExpandAll
             onChange={this.onChange}
+            allowClear
           />
         )}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="仅超管可见">
+      <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="仅超管可见">
         {form.getFieldDecorator('onlySa', {})(
           <RadioGroup>
             <Radio value>是</Radio>
@@ -94,7 +94,7 @@ const CreateForm = Form.create({
 @connect(({ global, menu, loading }) => ({
   userMenus: global.userMenus,
   menu,
-  loading: loading.effects['menu/fetch'],
+  loading: loading.models.menu,
 }))
 export default class Menu extends PureComponent {
   state = {
@@ -111,9 +111,24 @@ export default class Menu extends PureComponent {
     });
   };
   handleFormChange=(changedFields) => {
-    console.log(changedFields);
     this.setState({
       item: Object.assign(this.state.item,changedFields)
+    });
+  };
+  showSuccess=(response)=>{
+    // TODO;
+    message.success('添加成功');
+    this.props.dispatch({ type: 'global/changeMenu',payload:response.userMenus });
+  };
+  handleSave = fields => {
+    this.props.dispatch({
+      type: 'menu/saveMenu',
+      payload: {...fields,id:this.state.item.id},
+      callback:this.showSuccess,
+    });
+    
+    this.setState({
+      modalVisible: false,
     });
   };
   columns = [
@@ -164,7 +179,7 @@ export default class Menu extends PureComponent {
     const { userMenus, menu: { data }, loading } = this.props;
     const { modalVisible,item } = this.state;
     const parentMethods = {
-      handleAdd: this.handleAdd,
+      handleSave: this.handleSave,
       handleModalVisible: this.handleModalVisible,
     };
     return (

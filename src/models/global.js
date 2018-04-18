@@ -7,7 +7,7 @@ export default {
     collapsed: false,
     // notices: [],
     currentUser: {},
-    userMenus:[]
+    userMenus: [],
   },
 
   effects: {
@@ -15,7 +15,13 @@ export default {
       const response = yield call(getIndexData);
       yield put({
         type: 'saveUserAndMenu',
-        payload: {currentUser:response.user,userMenus:response.menus}
+        payload: { currentUser: response.user, userMenus: response.menus },
+      });
+    },
+    *changeMenu({ payload }, { put }) {
+      yield put({
+        type: 'saveMenu',
+        payload,
       });
     },
   },
@@ -27,11 +33,17 @@ export default {
         collapsed: payload,
       };
     },
-    saveUserAndMenu(state,{ payload }){
+    saveUserAndMenu(state, { payload }) {
       return {
         ...state,
         currentUser: payload.currentUser,
-        userMenus:payload.userMenus
+        userMenus: payload.userMenus,
+      };
+    },
+    saveMenu(state, { payload }) {
+      return {
+        ...state,
+        userMenus: payload,
       };
     },
     // saveNotices(state, { payload }) {
