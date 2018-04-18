@@ -73,8 +73,11 @@ export default function request(url, options) {
     }
   }
 
-  return fetch(baseUrl + url, newOptions).then(checkStatus).then(response => {    
-    if (newOptions.method === 'DELETE' || response.status === 204) {
+  return fetch(baseUrl + url, newOptions).then(checkStatus).then(response => {
+    // if (newOptions.method === 'DELETE' || response.status === 204) {
+    //   return response.text();
+    // }
+    if (response.status === 204) {
       return response.text();
     }
     return response.json();
