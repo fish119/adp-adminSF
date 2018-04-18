@@ -1,11 +1,12 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Divider, Table, Icon,Card,Button,Form,Modal,Input,Radio,Slider,TreeSelect,message,Popconfirm } from 'antd';
+import { Divider, Table, Card,Button,Form,Modal,Input,Radio,Slider,TreeSelect,message,Popconfirm,Select } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../layouts/TableList.less';
 import {formatterTree} from '../../utils/utils.js'
 
-const newItem={name:'',path:'',onlySa:false,sort:0}
+const newItem={name:'',url:'',description:'',method:'',onlySa:false,sort:0}
+const Option = Select.Option;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const CreateForm = Form.create({
@@ -17,17 +18,20 @@ const CreateForm = Form.create({
       name: Form.createFormField({
         value: props.item.name,
       }),
-      path: Form.createFormField({
-        value: props.item.path,
+      url: Form.createFormField({
+        value: props.item.url,
+      }),
+      description: Form.createFormField({
+        value: props.item.description,
+      }),
+      method: Form.createFormField({
+        value: props.item.method,
       }),
       onlySa: Form.createFormField({
         value: props.item.onlySa,
       }),
       sort: Form.createFormField({
         value: props.item.sort,
-      }),
-      icon: Form.createFormField({
-        value: props.item.icon,
       }),
       pid: Form.createFormField({
         value: props.item.pid?props.item.pid.toString():'',
@@ -46,37 +50,48 @@ const CreateForm = Form.create({
   
   return (
     <Modal
-      title={item!=null?"编辑菜单":"新建菜单"}
+      id="authorityModal"
+      title={item!=null?"编辑权限":"新建权限"}
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleModalVisible(false,{name:'',path:'',onlySa:false,sort:0})}
     >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="菜单名称">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限名称">
         {form.getFieldDecorator('name', {
-          rules: [{ required: true, message: '请输入菜单名称...' }],
+          rules: [{ required: true, message: '请输入权限名称...' }],
         })(<Input placeholder="请输入" maxLength="10" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="菜单URL">
-        {form.getFieldDecorator('path', {
-          rules: [{ required: true, message: '请输入菜单URL...' }],
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限URL">
+        {form.getFieldDecorator('url', {
+          rules: [{ required: true, message: '请输入权限URL...' }],
         })(<Input placeholder="请输入"  maxLength="10" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="菜单图标">
-        {form.getFieldDecorator('icon',{})(<Input placeholder="请输入" addonBefore={<Icon type={item.icon} />} />)}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="父级菜单">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="父级权限">
         {form.getFieldDecorator('pid',{})(
           <TreeSelect
-            style={{ width: 300 }}
-            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+           
+            style={{ width: 300 }}           
             treeData={formatterTree(treeData)}
             placeholder="Please select"
-            treeDefaultExpandAll
             onChange={this.onChange}
             allowClear
           />
         )}
       </FormItem>
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限描述">
+        {form.getFieldDecorator('description',{})(<Input placeholder="请输入" />)}
+      </FormItem>
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限方法">
+        {form.getFieldDecorator('method',{})(
+          <Select style={{ width: 120 }}>
+            <Option value="ALL">ALL</Option>
+            <Option value="GET">GET</Option>
+            <Option value="POST">POST</Option>
+            <Option value="PUT">PUT</Option>
+            <Option value="DELETE">DELETE</Option>
+          </Select>
+        )}
+      </FormItem>      
       <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="仅超管可见">
         {form.getFieldDecorator('onlySa', {})(
           <RadioGroup>
@@ -84,25 +99,25 @@ const CreateForm = Form.create({
             <Radio value={false}>否</Radio>
           </RadioGroup>)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="菜单序号">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限序号">
         {form.getFieldDecorator('sort', {})(<Slider />)}
       </FormItem>
     </Modal>
   );
 });
 
-@connect(({ global, menu, loading }) => ({
+@connect(({ global, authority, loading }) => ({
   userMenus: global.userMenus,
-  menu,
-  loading: loading.models.menu,
+  authority,
+  loading: loading.models.authority,
 }))
-export default class Menu extends PureComponent {
+export default class Authority extends PureComponent {
   state = {
     modalVisible: false,
     item:Object.assign({},newItem),
   }
   componentWillMount() {
-    this.props.dispatch({ type: 'menu/fetch' });
+    this.props.dispatch({ type: 'authority/fetch' });
   };  
   handleModalVisible = (flag,record) => {
     this.setState({
@@ -115,13 +130,12 @@ export default class Menu extends PureComponent {
       item: Object.assign(this.state.item,changedFields)
     });
   };
-  showSuccess=(response)=>{
+  showSuccess=()=>{
     message.success('操作成功');
-    this.props.dispatch({ type: 'global/changeMenu',payload:response.userMenus });
   };
   handleSave = fields => {
     this.props.dispatch({
-      type: 'menu/saveMenu',
+      type: 'authority/saveAuthority',
       payload: {...fields,id:this.state.item.id},
       callback:this.showSuccess,
     });
@@ -133,29 +147,27 @@ export default class Menu extends PureComponent {
   };
   handlDelete = (param) => {
     this.props.dispatch({
-      type: 'menu/deleteMenu',
+      type: 'authority/deleteAuthority',
       payload: param.id,
       callback:this.showSuccess,
     });
   };
   columns = [
     {
-      title: '菜单名称',
+      title: '权限名称',
       dataIndex: 'name',
       key: 'name',
+      align: 'left',
     },
     {
-      title: '图标',
-      dataIndex: 'icon',
-      key: 'icon',
-      align: 'center',
-      render: icon => <Icon type={icon} />,
+      title: '权限URL',
+      dataIndex: 'url',
+      key: 'url',
     },
     {
-      title: '菜单URL',
-      dataIndex: 'path',
-      key: 'path',
-      align: 'center',
+      title: '权限方法',
+      dataIndex: 'method',
+      key: 'method',
     },
     {
       title: '仅管理员可见',
@@ -185,7 +197,7 @@ export default class Menu extends PureComponent {
     },
   ];
   render() {
-    const { userMenus, menu: { data }, loading } = this.props;
+    const { userMenus, authority: { data }, loading } = this.props;
     const { modalVisible,item } = this.state;
     const parentMethods = {
       handleSave: this.handleSave,

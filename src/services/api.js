@@ -31,3 +31,22 @@ export async function deleteMenu(params) {
     method: 'DELETE',
   });
 }
+
+export async function getAllAuthorities() {
+  return request('setting/authorities', {
+    method: 'GET',
+  });
+}
+
+export async function saveAuthority(params) {
+  return request('setting/authorities', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function deleteAuthority(params) {
+  return request(`setting/authority/${params}`, {
+    method: 'DELETE',
+  });
+}
