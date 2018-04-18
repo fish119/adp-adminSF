@@ -1,4 +1,4 @@
-import { getAllMenus, saveMenu } from '../services/api';
+import { getAllMenus, saveMenu, deleteMenu } from '../services/api';
 
 export default {
   namespace: 'menu',
@@ -17,10 +17,19 @@ export default {
     },
     *saveMenu({ payload, callback }, { call, put }) {
       const response = yield call(saveMenu, payload);
-      if(response){
-        yield put({ type: 'save', payload: response })
+      if (response) {
+        yield put({ type: 'save', payload: response });
       }
-      if (callback&&response) {
+      if (callback && response) {
+        yield callback(response);
+      }
+    },
+    *deleteMenu({ payload, callback }, { call, put }) {
+      const response = yield call(deleteMenu, payload);
+      if (response) {
+        yield put({ type: 'save', payload: response });
+      }
+      if (callback && response) {
         yield callback(response);
       }
     },

@@ -20,9 +20,14 @@ export async function getAllMenus() {
 }
 
 export async function saveMenu(params) {
-  const a = request('setting/menus', {
+  return request('setting/menus', {
     method: 'POST',
     body: params,
   });
-  return a;
+}
+
+export async function deleteMenu(params) {
+  return request(`setting/menu/${params}`, {
+    method: 'DELETE',
+  });
 }

@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Divider, Table, Icon,Card,Button,Form,Modal,Input,Radio,Slider,TreeSelect,message } from 'antd';
+import { Divider, Table, Icon,Card,Button,Form,Modal,Input,Radio,Slider,TreeSelect,message,Popconfirm } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../layouts/TableList.less';
 import {formatterTree} from '../../utils/utils.js'
@@ -99,11 +99,11 @@ const CreateForm = Form.create({
 export default class Menu extends PureComponent {
   state = {
     modalVisible: false,
-    item:newItem,
+    item:Object.assign({},newItem),
   }
   componentWillMount() {
     this.props.dispatch({ type: 'menu/fetch' });
-  };
+  };  
   handleModalVisible = (flag,record) => {
     this.setState({
       modalVisible: !!flag,
@@ -116,8 +116,7 @@ export default class Menu extends PureComponent {
     });
   };
   showSuccess=(response)=>{
-    // TODO;
-    message.success('添加成功');
+    message.success('操作成功');
     this.props.dispatch({ type: 'global/changeMenu',payload:response.userMenus });
   };
   handleSave = fields => {
@@ -129,6 +128,14 @@ export default class Menu extends PureComponent {
     
     this.setState({
       modalVisible: false,
+      item:Object.assign({},newItem),
+    });
+  };
+  handlDelete = (param) => {
+    this.props.dispatch({
+      type: 'menu/deleteMenu',
+      payload: param.id,
+      callback:this.showSuccess,
     });
   };
   columns = [
@@ -170,7 +177,9 @@ export default class Menu extends PureComponent {
         <Fragment>
           <Button type="primary" ghost onClick={() => this.handleModalVisible(true,Object.assign({},record))}>编辑</Button>
           <Divider type="vertical" />
-          <Button type="danger" ghost>删除</Button>
+          <Popconfirm title="您确定要删除该记录？" onConfirm={() =>this.handlDelete(record)} okText="确定" cancelText="取消">
+            <Button type="danger" ghost>删除</Button>
+          </Popconfirm>
         </Fragment>
       ),
     },
@@ -187,7 +196,7 @@ export default class Menu extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
-              <Button style={{marginBottom:'1em'}}  icon="plus" type="primary" onClick={() => this.handleModalVisible(true,newItem)}>
+              <Button style={{marginBottom:'1em'}}  icon="plus" type="primary" onClick={() => this.handleModalVisible(true,Object.assign({},newItem))}>
                 新建
               </Button>
             </div>
