@@ -1,14 +1,16 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Divider, Table, Card,Button,Form,Modal,Input,Radio,Slider,TreeSelect,message,Popconfirm,Select } from 'antd';
+import { Select , Divider, Table, Card,Button,Form,Modal,Input,Radio,Slider,TreeSelect,message,Popconfirm } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../layouts/TableList.less';
 import {formatterTree} from '../../utils/utils.js'
 
 const newItem={name:'',url:'',description:'',method:'',onlySa:false,sort:0}
-const Option = Select.Option;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
+const newLocal = Select.Option;
+const Option = newLocal;
+const { TextArea } = Input;
 const CreateForm = Form.create({
   onValuesChange(props, changedFields) {
     props.onChange(changedFields);
@@ -79,7 +81,7 @@ const CreateForm = Form.create({
         )}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限描述">
-        {form.getFieldDecorator('description',{})(<Input placeholder="请输入" />)}
+        {form.getFieldDecorator('description',{})(<TextArea row={3} maxLength={100} placeholder="请输入" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限方法">
         {form.getFieldDecorator('method',{})(
