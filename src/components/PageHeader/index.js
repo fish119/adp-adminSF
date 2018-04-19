@@ -5,6 +5,7 @@ import { Breadcrumb, Tabs } from 'antd';
 import classNames from 'classnames';
 import styles from './index.less';
 import { urlToList } from '../_utils/pathTools';
+import {getMenuData} from '../../common/menu'
 
 const { TabPane } = Tabs;
 export function getBreadcrumb(breadcrumbNameMap, url) {
@@ -35,11 +36,23 @@ export default class PageHeader extends PureComponent {
     return {
       routes: this.props.routes || this.context.routes,
       params: this.props.params || this.context.params,
+      userMenus:this.props.userMenus,
       routerLocation: this.props.location || this.context.location,
       breadcrumbNameMap: this.props.breadcrumbNameMap || this.context.breadcrumbNameMap,
     };
   };
-
+  getFlatMenuData=(menus)=> {
+    let keys = {};
+    menus.forEach(item => {
+      if (item.children) {
+        keys[item.path] = { ...item };
+        keys = { ...keys, ...this.getFlatMenuData(item.children) };
+      } else {
+        keys[item.path] = { ...item };
+      }
+    });
+    return keys;
+  }
   // Generated according to props
   conversionFromProps = () => {
     const { breadcrumbList, breadcrumbSeparator, linkElement = 'a' } = this.props;
@@ -61,8 +74,47 @@ export default class PageHeader extends PureComponent {
       </Breadcrumb>
     );
   };
+
+  conversionFromUserMenus = (routerLocation, userMenus) => {
+    const menuData = this.getFlatMenuData(getMenuData(userMenus));
+    const { breadcrumbSeparator, linkElement = 'a' ,} = this.props;
+    // Convert the url to an array
+    const pathSnippets = urlToList(routerLocation.pathname);
+    // Loop data mosaic routing
+    const extraBreadcrumbItems = pathSnippets.map((url, index) => {
+      const currentBreadcrumb = getBreadcrumb(menuData, url);
+      const isLinkable = index !== pathSnippets.length - 1 && currentBreadcrumb.component;
+      return currentBreadcrumb.name && !currentBreadcrumb.hideInBreadcrumb ? (
+        <Breadcrumb.Item key={url}>
+          {createElement(
+            isLinkable ? linkElement : 'span',
+            { [linkElement === 'a' ? 'href' : 'to']: url },
+            currentBreadcrumb.name
+          )}
+        </Breadcrumb.Item>
+      ) : null;
+    });
+    // Add home breadcrumbs to your head
+    extraBreadcrumbItems.unshift(
+      <Breadcrumb.Item key="home">
+        {createElement(
+          linkElement,
+          {
+            [linkElement === 'a' ? 'href' : 'to']: '/',
+          },
+          '首页'
+        )}
+      </Breadcrumb.Item>
+    );
+    return (
+      <Breadcrumb className={styles.breadcrumb} separator={breadcrumbSeparator}>
+        {extraBreadcrumbItems}
+      </Breadcrumb>
+    );
+  };
+
   conversionFromLocation = (routerLocation, breadcrumbNameMap) => {
-    const { breadcrumbSeparator, linkElement = 'a' } = this.props;
+    const { breadcrumbSeparator, linkElement = 'a' ,} = this.props;
     // Convert the url to an array
     const pathSnippets = urlToList(routerLocation.pathname);
     // Loop data mosaic routing
@@ -103,26 +155,33 @@ export default class PageHeader extends PureComponent {
    */
   conversionBreadcrumbList = () => {
     const { breadcrumbList, breadcrumbSeparator } = this.props;
-    const { routes, params, routerLocation, breadcrumbNameMap } = this.getBreadcrumbProps();
+    const { routes, params, routerLocation, breadcrumbNameMap,userMenus } = this.getBreadcrumbProps();
     if (breadcrumbList && breadcrumbList.length) {
       return this.conversionFromProps();
     }
     // 如果传入 routes 和 params 属性
     // If pass routes and params attributes
     if (routes && params) {
+      const realRoutes = routes.map(item => {
+        return { path: item.path, breadcrumbName: item.name };
+      });
       return (
         <Breadcrumb
           className={styles.breadcrumb}
-          routes={routes.filter(route => route.breadcrumbName)}
+          routes={realRoutes}
           params={params}
           itemRender={this.itemRender}
           separator={breadcrumbSeparator}
         />
       );
     }
+    // 根据传入的userMenus生成面包屑
+    if(userMenus){
+      return this.conversionFromUserMenus(routerLocation,userMenus);
+    }
     // 根据 location 生成 面包屑
     // Generate breadcrumbs based on location
-    if (routerLocation && routerLocation.pathname) {
+    if (routerLocation && routerLocation.pathname && !userMenus) {
       return this.conversionFromLocation(routerLocation, breadcrumbNameMap);
     }
     return null;
@@ -157,10 +216,11 @@ export default class PageHeader extends PureComponent {
       className,
       tabActiveKey,
       tabDefaultActiveKey,
-      tabBarExtraContent
+      tabBarExtraContent,
+      userMenus,
     } = this.props;
     const clsString = classNames(styles.pageHeader, className);
-    const breadcrumb = this.conversionBreadcrumbList();
+    const breadcrumb = this.conversionBreadcrumbList(userMenus);
     const activeKeyProps = {};
     if (tabDefaultActiveKey !== undefined) {
       activeKeyProps.defaultActiveKey = tabDefaultActiveKey;
