@@ -66,7 +66,7 @@ const CreateForm = Form.create({
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限URL">
         {form.getFieldDecorator('url', {
           rules: [{ required: true, message: '请输入权限URL...' }],
-        })(<Input placeholder="请输入"  maxLength="10" />)}
+        })(<Input placeholder="请输入"  maxLength="50" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="父级权限">
         {form.getFieldDecorator('pid',{})(

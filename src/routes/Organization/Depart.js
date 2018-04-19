@@ -30,12 +30,11 @@ const CreateForm = Form.create({})(props => {
         })(<Input placeholder="请输入" maxLength="10" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="父级权限">
-        {form.getFieldDecorator('pid', { initialValue: item.pid ? item.pid.toString() : null })(
+        {form.getFieldDecorator('pid', { initialValue: item.pid ? item.pid.toString() : null ,
+        rules:[{pattern:new RegExp(`^(?!${item.id}$)`),message:'不能选择自己为父级'}]})(
           <TreeSelect
-            style={{ width: 300 }}
             treeData={formatterTreeSelect(treeData)}
             placeholder="Please select"
-            onChange={this.onChange}
             allowClear
           />
         )}
@@ -73,11 +72,13 @@ export default class Depart extends PureComponent {
     this.setState({
       item: Object.assign({}, info.node.props.dataRef),
     });
+    this.formRef.resetFields();
   };
   onNewBtnClick = () => {
     this.setState({
       item: Object.assign({}, newItem),
     });
+    this.formRef.resetFields();
   };
   showSuccess = () => {
     message.success('操作成功');
@@ -104,11 +105,14 @@ export default class Depart extends PureComponent {
       });
     }
   };
+  saveFormRef = (formRef) => {
+    this.formRef = formRef;
+  }
   renderTreeNodes = data => {
     return data.map(item => {
       if (item.children) {
         return (
-          <TreeNode title={item.name} key={item.id} dataRef={item}>
+          <TreeNode title={item.name} key={item.id} dataRef={item}  >
             {this.renderTreeNodes(item.children)}
           </TreeNode>
         );
@@ -126,7 +130,7 @@ export default class Depart extends PureComponent {
       <PageHeaderLayout userMenus={userMenus}>
         <Spin spinning={loading}>
           <Row gutter={24}>
-            <Col xl={8} lg={24} md={24} sm={24} xs={24}>
+            <Col xl={8} lg={8} md={8} sm={24} xs={24}>
               <Card
                 loading={loading}
                 bordered={false}
@@ -142,10 +146,10 @@ export default class Depart extends PureComponent {
                   </Button>
                 }
               >
-                <Tree onSelect={this.onTreeSelect}>{this.renderTreeNodes(data.list)}</Tree>
+                <Tree onSelect={this.onTreeSelect} defaultExpandAll>{this.renderTreeNodes(data.list)}</Tree>
               </Card>
             </Col>
-            <Col xl={16} lg={24} md={24} sm={24} xs={24}>
+            <Col xl={16} lg={16} md={16} sm={24} xs={24}>
               <Card
                 bordered={false}
                 title={item.id ? '编辑部门' : '新建部门'}
@@ -158,7 +162,7 @@ export default class Depart extends PureComponent {
                   </Popconfirm>
                 }
               >
-                <CreateForm {...parentMethods} item={item} treeData={data.list} />
+                <CreateForm ref={this.saveFormRef} {...parentMethods} item={item} treeData={data.list} />
               </Card>
             </Col>
           </Row>

@@ -19,7 +19,7 @@ export default {
       if (response) {
         yield put({ type: 'save', payload: response });
       }
-      if (callback) {
+      if (callback&&response) {
         yield callback();
       }
     },
@@ -28,7 +28,7 @@ export default {
       if (response) {
         yield put({ type: 'save', payload: response });
       }
-      if (callback) {
+      if (callback&&response) {
         yield callback();
       }
     },

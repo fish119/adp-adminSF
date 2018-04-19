@@ -1,74 +1,52 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent} from 'react';
 import { connect } from 'dva';
-import { Divider, Table, Icon,Card,Button,Form,Modal,Input,Radio,Slider,TreeSelect,message,Popconfirm } from 'antd';
+import {Divider,Spin,Row,Col, Tree, Icon,Card,Button,Form,Input,Slider,TreeSelect,message,Popconfirm } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import styles from '../../layouts/TableList.less';
 import {formatterTreeSelect} from '../../utils/utils.js'
 
 const newItem={name:'',path:'',onlySa:false,sort:0}
 const FormItem = Form.Item;
-const RadioGroup = Radio.Group;
+const newLocal = Tree.TreeNode;
+const TreeNode = newLocal;
 const CreateForm = Form.create({
   onValuesChange(props, changedFields) {
-    props.onChange(changedFields);
-  },
-  mapPropsToFields(props) {
-    return {
-      name: Form.createFormField({
-        value: props.item.name,
-      }),
-      path: Form.createFormField({
-        value: props.item.path,
-      }),
-      onlySa: Form.createFormField({
-        value: props.item.onlySa,
-      }),
-      sort: Form.createFormField({
-        value: props.item.sort,
-      }),
-      icon: Form.createFormField({
-        value: props.item.icon,
-      }),
-      pid: Form.createFormField({
-        value: props.item.pid?props.item.pid.toString():'',
-      }),
-    };
+   if(changedFields.icon){
+      props.onChange(changedFields);
+    }
   },
 })(props => {
-  const { modalVisible, form, handleSave, handleModalVisible ,item,treeData } = props;
-  const okHandle = () => {
+  const { form, handleSave, item,treeData,icon } = props;
+  const onCancle = () => {
+    form.resetFields();
+    props.onChange({icon:item.icon});
+  };
+  const onSave = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
       handleSave(fieldsValue);
     });
   };
-  
   return (
-    <Modal
-      title={item!=null?"编辑菜单":"新建菜单"}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => handleModalVisible(false,{name:'',path:'',onlySa:false,sort:0})}
-    >
+    <Form>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="菜单名称">
-        {form.getFieldDecorator('name', {
+        {form.getFieldDecorator('name', {initialValue: item.name,
           rules: [{ required: true, message: '请输入菜单名称...' }],
         })(<Input placeholder="请输入" maxLength="10" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="菜单URL">
-        {form.getFieldDecorator('path', {
+        {form.getFieldDecorator('path', {initialValue: item.path,
           rules: [{ required: true, message: '请输入菜单URL...' }],
-        })(<Input placeholder="请输入"  maxLength="10" />)}
+        })(<Input placeholder="请输入"  maxLength="50" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="菜单图标">
-        {form.getFieldDecorator('icon',{})(<Input placeholder="请输入" addonBefore={<Icon type={item.icon} />} />)}
+        {form.getFieldDecorator('icon',{initialValue: item.icon,})(<Input placeholder="请输入" addonBefore={<Icon type={icon} />} />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="父级菜单">
-        {form.getFieldDecorator('pid',{})(
+        {form.getFieldDecorator('pid',{initialValue: item.pid ? item.pid.toString() : null,
+        rules:[{pattern:new RegExp(`^(?!${item.id}$)`),message:'不能选择自己为父级'}]})(
           <TreeSelect
             style={{ width: 300 }}
-            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
             treeData={formatterTreeSelect(treeData)}
             placeholder="Please select"
             treeDefaultExpandAll
@@ -77,17 +55,28 @@ const CreateForm = Form.create({
           />
         )}
       </FormItem>
-      <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="仅超管可见">
-        {form.getFieldDecorator('onlySa', {})(
+      {/* <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="仅超管可见">
+        {form.getFieldDecorator('onlySa', {initialValue: item.onlySa})(
           <RadioGroup>
             <Radio value>是</Radio>
             <Radio value={false}>否</Radio>
           </RadioGroup>)}
-      </FormItem>
+      </FormItem> */}
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="菜单序号">
-        {form.getFieldDecorator('sort', {})(<Slider />)}
+        {form.getFieldDecorator('sort', {initialValue: item.sort})(<Slider />)}
       </FormItem>
-    </Modal>
+      <Divider />
+      <div style={{ textAlign: 'center' }}>
+        <FormItem>
+          <Button type="primary" onClick={onSave}>
+            提交
+          </Button>
+          <Button style={{ marginLeft: 8 }} onClick={onCancle}>
+            取消
+          </Button>
+        </FormItem>
+      </div>
+    </Form>
   );
 });
 
@@ -98,21 +87,29 @@ const CreateForm = Form.create({
 }))
 export default class Menu extends PureComponent {
   state = {
-    modalVisible: false,
     item:Object.assign({},newItem),
+    icon:'',
   }
   componentWillMount() {
     this.props.dispatch({ type: 'menu/fetch' });
   };  
-  handleModalVisible = (flag,record) => {
+  onTreeSelect = (selectedKeys, info) => {
     this.setState({
-      modalVisible: !!flag,
-      item:record,
+      item: Object.assign({}, info.node.props.dataRef),
+      icon:info.node.props.dataRef.icon,
     });
+    this.formRef.resetFields();
+  };
+  onNewBtnClick = () => {
+    this.setState({
+      item: Object.assign({}, newItem),
+      icon:'',
+    });
+    this.formRef.resetFields();
   };
   handleFormChange=(changedFields) => {
     this.setState({
-      item: Object.assign(this.state.item,changedFields)
+      icon: changedFields.icon,
     });
   };
   showSuccess=(response)=>{
@@ -127,92 +124,83 @@ export default class Menu extends PureComponent {
     });
     
     this.setState({
-      modalVisible: false,
       item:Object.assign({},newItem),
     });
   };
-  handlDelete = (param) => {
-    this.props.dispatch({
-      type: 'menu/deleteMenu',
-      payload: param.id,
-      callback:this.showSuccess,
+  handlDelete = () => {
+    if(this.state.item.id){
+      this.props.dispatch({
+        type: 'menu/deleteMenu',
+        payload: this.state.item.id,
+        callback:this.showSuccess,
+      });
+      this.setState({
+        item: Object.assign({}, newItem),
+      });
+    }
+  };
+  saveFormRef = (formRef) => {
+    this.formRef = formRef;
+  }
+  renderTreeNodes = data => {
+    return data.map(item => {
+      if (item.children) {
+        return (
+          <TreeNode title={item.name} key={item.id} dataRef={item}  >
+            {this.renderTreeNodes(item.children)}
+          </TreeNode>
+        );
+      }
+      return <TreeNode {...item} dataRef={item} />;
     });
   };
-  columns = [
-    {
-      title: '菜单名称',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: '图标',
-      dataIndex: 'icon',
-      key: 'icon',
-      align: 'center',
-      render: icon => <Icon type={icon} />,
-    },
-    {
-      title: '菜单URL',
-      dataIndex: 'path',
-      key: 'path',
-      align: 'center',
-    },
-    {
-      title: '仅管理员可见',
-      dataIndex: 'onlySa',
-      key: 'onlySa',
-      align: 'center',
-      render:value=> value?'是':'否',
-    },
-    {
-      title: '排序号',
-      dataIndex: 'sort',
-      key: 'sort',
-      align: 'center',
-    },
-    {
-      title: '操作',
-      align: 'center',
-      render: (text, record) => (
-        <Fragment>
-          <Button type="primary" ghost onClick={() => this.handleModalVisible(true,Object.assign({},record))}>编辑</Button>
-          <Divider type="vertical" />
-          <Popconfirm title="您确定要删除该记录？" onConfirm={() =>this.handlDelete(record)} okText="确定" cancelText="取消">
-            <Button type="danger" ghost>删除</Button>
-          </Popconfirm>
-        </Fragment>
-      ),
-    },
-  ];
   render() {
     const { userMenus, menu: { data }, loading } = this.props;
-    const { modalVisible,item } = this.state;
+    const { item ,icon} = this.state;
     const parentMethods = {
       handleSave: this.handleSave,
-      handleModalVisible: this.handleModalVisible,
     };
     return (
       <PageHeaderLayout userMenus={userMenus}>
-        <Card bordered={false}>
-          <div className={styles.tableList}>
-            <div className={styles.tableListOperator}>
-              <Button style={{marginBottom:'1em'}}  icon="plus" type="primary" onClick={() => this.handleModalVisible(true,Object.assign({},newItem))}>
-                新建
-              </Button>
-            </div>
-            <Table
-              // selectedRows={selectedRows}
-              pagination={false}
-              loading={loading}
-              dataSource={data.list}
-              columns={this.columns}            
-              // onSelectRow={this.handleSelectRows}
-              // onChange={this.handleStandardTableChange}
-              rowKey="id"
-            />
-          </div>
-        </Card>
-        <CreateForm treeData={data.list} {...parentMethods} modalVisible={modalVisible} item={item} onChange={this.handleFormChange} />
+        <Spin spinning={loading}>
+          <Row gutter={24}>
+            <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+              <Card
+                loading={loading}
+                bordered={false}
+                title="部门列表"
+                extra={
+                  <Button
+                    icon="plus"
+                    type="primary"
+                    style={{ marginBottom: '-14px', marginTop: '-14px' }}
+                    onClick={this.onNewBtnClick}
+                  >
+                    新建
+                  </Button>
+                }
+              >
+                <Tree showLine onSelect={this.onTreeSelect} defaultExpandAll>{this.renderTreeNodes(data.list)}</Tree>
+              </Card>
+            </Col>
+            <Col xl={16} lg={16} md={16} sm={24} xs={24}>
+              <Card
+                bordered={false}
+                title={item.id ? '编辑部门' : '新建部门'}
+                loading={loading}
+                extra={
+                  <Popconfirm title="您确定要删除该记录？" onConfirm={() =>this.handlDelete()} okText="确定" cancelText="取消">
+                    <Button icon="delete" type="danger" style={{ marginBottom: '-14px', marginTop: '-14px' }}>
+                      删除
+                    </Button>
+                  </Popconfirm>
+                }
+              >
+                <CreateForm onChange={this.handleFormChange} ref={this.saveFormRef} {...parentMethods} icon={icon} item={item} treeData={data.list} />
+              </Card>
+            </Col>
+          </Row>
+        </Spin>  
       </PageHeaderLayout>      
     );
   };
