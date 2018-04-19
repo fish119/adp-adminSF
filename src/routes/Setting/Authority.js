@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { Select , Divider, Table, Card,Button,Form,Modal,Input,Radio,Slider,TreeSelect,message,Popconfirm } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../layouts/TableList.less';
-import {formatterTree} from '../../utils/utils.js'
+import {formatterTreeSelect} from '../../utils/utils.js'
 
 const newItem={name:'',url:'',description:'',method:'',onlySa:false,sort:0}
 const FormItem = Form.Item;
@@ -71,9 +71,8 @@ const CreateForm = Form.create({
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="父级权限">
         {form.getFieldDecorator('pid',{})(
           <TreeSelect
-           
             style={{ width: 300 }}           
-            treeData={formatterTree(treeData)}
+            treeData={formatterTreeSelect(treeData)}
             placeholder="Please select"
             onChange={this.onChange}
             allowClear

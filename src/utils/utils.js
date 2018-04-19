@@ -160,16 +160,30 @@ export function isUrl(path) {
   return reg.test(path);
 }
 
-function formatterTreeData(data) {
+function formatterTreeSelectData(data) {
   return data.map(dataItem => {
     const result = {
       label: dataItem.name || '',
       value: dataItem.id.toString() || '',
       key: dataItem.id || '',
-      children: formatterTree(dataItem.children),
+      children: formatterTreeSelectData(dataItem.children),
     };
     return result;
   });
 }
 
+function formatterTreeData(data) {
+  return data.map(dataItem => {
+    const result = {
+      title: dataItem.name || '',
+      key: dataItem.id.toString() || '',
+      children: formatterTreeData(dataItem.children),
+    };
+    return result;
+  });
+}
+
+
+
+export const formatterTreeSelect = data => formatterTreeSelectData(data);
 export const formatterTree = data => formatterTreeData(data);

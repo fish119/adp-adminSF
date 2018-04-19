@@ -50,3 +50,22 @@ export async function deleteAuthority(params) {
     method: 'DELETE',
   });
 }
+
+export async function getAllDeparts() {
+  return request('setting/departments', {
+    method: 'GET',
+  });
+}
+
+export async function saveDepart(params) {
+  return request('setting/departments', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function deleteDepart(params) {
+  return request(`setting/department/${params}`, {
+    method: 'DELETE',
+  });
+}

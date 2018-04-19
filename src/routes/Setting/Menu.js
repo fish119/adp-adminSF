@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { Divider, Table, Icon,Card,Button,Form,Modal,Input,Radio,Slider,TreeSelect,message,Popconfirm } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../layouts/TableList.less';
-import {formatterTree} from '../../utils/utils.js'
+import {formatterTreeSelect} from '../../utils/utils.js'
 
 const newItem={name:'',path:'',onlySa:false,sort:0}
 const FormItem = Form.Item;
@@ -69,7 +69,7 @@ const CreateForm = Form.create({
           <TreeSelect
             style={{ width: 300 }}
             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-            treeData={formatterTree(treeData)}
+            treeData={formatterTreeSelect(treeData)}
             placeholder="Please select"
             treeDefaultExpandAll
             onChange={this.onChange}
