@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Tree, Button, Spin, Form, Input, Slider, TreeSelect, message,Popconfirm } from 'antd';
+import { Row, Col, Card, Tree, Button, Spin, Form, Input, Slider, TreeSelect, message,Popconfirm,Divider } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { formatterTreeSelect } from '../../utils/utils.js';
 
@@ -42,6 +42,7 @@ const CreateForm = Form.create({})(props => {
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限序号">
         {form.getFieldDecorator('sort', { initialValue: item.sort })(<Slider />)}
       </FormItem>
+      <Divider />
       <div style={{ textAlign: 'center' }}>
         <FormItem>
           <Button type="primary" onClick={onSave}>

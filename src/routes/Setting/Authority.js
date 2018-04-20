@@ -1,48 +1,23 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Select , Divider, Table, Card,Button,Form,Modal,Input,Radio,Slider,TreeSelect,message,Popconfirm } from 'antd';
+import { Spin,Row,Col,Select , Divider,  Card,Button,Form,Tree,Input,Radio,Slider,TreeSelect,message,Popconfirm } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import styles from '../../layouts/TableList.less';
 import {formatterTreeSelect} from '../../utils/utils.js'
 
 const newItem={name:'',url:'',description:'',method:'',onlySa:false,sort:0}
 const FormItem = Form.Item;
+const newLocal = Tree.TreeNode;
+const TreeNode = newLocal;
 const RadioGroup = Radio.Group;
-const newLocal = Select.Option;
-const Option = newLocal;
+const newLocal1 = Select.Option;
+const Option = newLocal1;
 const { TextArea } = Input;
-const CreateForm = Form.create({
-  onValuesChange(props, changedFields) {
-    props.onChange(changedFields);
-  },
-  mapPropsToFields(props) {
-    return {
-      name: Form.createFormField({
-        value: props.item.name,
-      }),
-      url: Form.createFormField({
-        value: props.item.url,
-      }),
-      description: Form.createFormField({
-        value: props.item.description,
-      }),
-      method: Form.createFormField({
-        value: props.item.method,
-      }),
-      onlySa: Form.createFormField({
-        value: props.item.onlySa,
-      }),
-      sort: Form.createFormField({
-        value: props.item.sort,
-      }),
-      pid: Form.createFormField({
-        value: props.item.pid?props.item.pid.toString():'',
-      }),
-    };
-  },
-})(props => {
-  const { modalVisible, form, handleSave, handleModalVisible ,item,treeData } = props;
-  const okHandle = () => {
+const CreateForm = Form.create({})(props => {
+  const { form, handleSave, item,treeData } = props;
+  const onCancle = () => {
+    form.resetFields();
+  };
+  const onSave = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
@@ -51,39 +26,32 @@ const CreateForm = Form.create({
   };
   
   return (
-    <Modal
-      id="authorityModal"
-      title={item!=null?"编辑权限":"新建权限"}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => handleModalVisible(false,{name:'',path:'',onlySa:false,sort:0})}
-    >
+    <Form>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限名称">
-        {form.getFieldDecorator('name', {
+        {form.getFieldDecorator('name', {initialValue: item.name,
           rules: [{ required: true, message: '请输入权限名称...' }],
         })(<Input placeholder="请输入" maxLength="10" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限URL">
-        {form.getFieldDecorator('url', {
+        {form.getFieldDecorator('url', {initialValue: item.url,
           rules: [{ required: true, message: '请输入权限URL...' }],
         })(<Input placeholder="请输入"  maxLength="50" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="父级权限">
-        {form.getFieldDecorator('pid',{})(
-          <TreeSelect
-            style={{ width: 300 }}           
+        {form.getFieldDecorator('pid',{initialValue: item.pid ? item.pid.toString() : null,
+        rules:[{pattern:new RegExp(`^(?!${item.id}$)`),message:'不能选择自己为父级'}]})(
+          <TreeSelect  
             treeData={formatterTreeSelect(treeData)}
             placeholder="Please select"
-            onChange={this.onChange}
             allowClear
           />
         )}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限描述">
-        {form.getFieldDecorator('description',{})(<TextArea row={3} maxLength={100} placeholder="请输入" />)}
+        {form.getFieldDecorator('description',{initialValue: item.description})(<TextArea row={3} maxLength={100} placeholder="请输入" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限方法">
-        {form.getFieldDecorator('method',{})(
+        {form.getFieldDecorator('method',{initialValue: item.method})(
           <Select style={{ width: 120 }}>
             <Option value="ALL">ALL</Option>
             <Option value="GET">GET</Option>
@@ -94,16 +62,27 @@ const CreateForm = Form.create({
         )}
       </FormItem>      
       <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="仅超管可见">
-        {form.getFieldDecorator('onlySa', {})(
+        {form.getFieldDecorator('onlySa', {initialValue: item.onlySa})(
           <RadioGroup>
             <Radio value>是</Radio>
             <Radio value={false}>否</Radio>
           </RadioGroup>)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限序号">
-        {form.getFieldDecorator('sort', {})(<Slider />)}
+        {form.getFieldDecorator('sort', {initialValue: item.sort})(<Slider />)}
       </FormItem>
-    </Modal>
+      <Divider />
+      <div style={{ textAlign: 'center' }}>
+        <FormItem>
+          <Button type="primary" onClick={onSave}>
+            提交
+          </Button>
+          <Button style={{ marginLeft: 8 }} onClick={onCancle}>
+            取消
+          </Button>
+        </FormItem>
+      </div>
+    </Form>
   );
 });
 
@@ -114,22 +93,22 @@ const CreateForm = Form.create({
 }))
 export default class Authority extends PureComponent {
   state = {
-    modalVisible: false,
     item:Object.assign({},newItem),
   }
   componentWillMount() {
     this.props.dispatch({ type: 'authority/fetch' });
   };  
-  handleModalVisible = (flag,record) => {
+  onTreeSelect = (selectedKeys, info) => {
     this.setState({
-      modalVisible: !!flag,
-      item:record,
+      item: Object.assign({}, info.node.props.dataRef),
     });
+    this.formRef.resetFields();
   };
-  handleFormChange=(changedFields) => {
+  onNewBtnClick = () => {
     this.setState({
-      item: Object.assign(this.state.item,changedFields)
+      item: Object.assign({}, newItem),
     });
+    this.formRef.resetFields();
   };
   showSuccess=()=>{
     message.success('操作成功');
@@ -140,92 +119,84 @@ export default class Authority extends PureComponent {
       payload: {...fields,id:this.state.item.id},
       callback:this.showSuccess,
     });
-    
     this.setState({
-      modalVisible: false,
       item:Object.assign({},newItem),
     });
   };
-  handlDelete = (param) => {
-    this.props.dispatch({
-      type: 'authority/deleteAuthority',
-      payload: param.id,
-      callback:this.showSuccess,
+  handlDelete = () => {
+    if(this.state.item.id){
+      this.props.dispatch({
+        type: 'authority/deleteAuthority',
+        payload: this.state.item.id,
+        callback:this.showSuccess,
+      });
+      this.setState({
+        item: Object.assign({}, newItem),
+      });
+    }
+  };
+  saveFormRef = (formRef) => {
+    this.formRef = formRef;
+  }
+  renderTreeNodes = data => {
+    return data.map(item => {
+      if (item.children) {
+        return (
+          <TreeNode title={item.name} key={item.id} dataRef={item}  >
+            {this.renderTreeNodes(item.children)}
+          </TreeNode>
+        );
+      }
+      return <TreeNode {...item} dataRef={item} />;
     });
   };
-  columns = [
-    {
-      title: '权限名称',
-      dataIndex: 'name',
-      key: 'name',
-      align: 'left',
-    },
-    {
-      title: '权限URL',
-      dataIndex: 'url',
-      key: 'url',
-    },
-    {
-      title: '权限方法',
-      dataIndex: 'method',
-      key: 'method',
-    },
-    {
-      title: '仅管理员可见',
-      dataIndex: 'onlySa',
-      key: 'onlySa',
-      align: 'center',
-      render:value=> value?'是':'否',
-    },
-    {
-      title: '排序号',
-      dataIndex: 'sort',
-      key: 'sort',
-      align: 'center',
-    },
-    {
-      title: '操作',
-      align: 'center',
-      render: (text, record) => (
-        <Fragment>
-          <Button type="primary" ghost onClick={() => this.handleModalVisible(true,Object.assign({},record))}>编辑</Button>
-          <Divider type="vertical" />
-          <Popconfirm title="您确定要删除该记录？" onConfirm={() =>this.handlDelete(record)} okText="确定" cancelText="取消">
-            <Button type="danger" ghost>删除</Button>
-          </Popconfirm>
-        </Fragment>
-      ),
-    },
-  ];
   render() {
     const { userMenus, authority: { data }, loading } = this.props;
-    const { modalVisible,item } = this.state;
+    const { item } = this.state;
     const parentMethods = {
       handleSave: this.handleSave,
-      handleModalVisible: this.handleModalVisible,
     };
     return (
       <PageHeaderLayout userMenus={userMenus}>
-        <Card bordered={false}>
-          <div className={styles.tableList}>
-            <div className={styles.tableListOperator}>
-              <Button style={{marginBottom:'1em'}}  icon="plus" type="primary" onClick={() => this.handleModalVisible(true,Object.assign({},newItem))}>
-                新建
-              </Button>
-            </div>
-            <Table
-              // selectedRows={selectedRows}
-              pagination={false}
-              loading={loading}
-              dataSource={data.list}
-              columns={this.columns}            
-              // onSelectRow={this.handleSelectRows}
-              // onChange={this.handleStandardTableChange}
-              rowKey="id"
-            />
-          </div>
-        </Card>
-        <CreateForm treeData={data.list} {...parentMethods} modalVisible={modalVisible} item={item} onChange={this.handleFormChange} />
+        <Spin spinning={loading}>
+          <Row gutter={24}>
+            <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+              <Card
+                loading={loading}
+                bordered={false}
+                title="权限列表"
+                extra={
+                  <Button
+                    icon="plus"
+                    type="primary"
+                    style={{ marginBottom: '-14px', marginTop: '-14px' }}
+                    onClick={this.onNewBtnClick}
+                  >
+                    新建
+                  </Button>
+                }
+              >
+                <Tree onSelect={this.onTreeSelect} defaultExpandAll>{this.renderTreeNodes(data.list)}</Tree>
+              </Card>
+            </Col>
+            <Col xl={16} lg={16} md={16} sm={24} xs={24}>
+              <Card
+                bordered={false}
+                title={item.id ? '编辑权限' : '新建权限'}
+                loading={loading}
+                extra={
+                  <Popconfirm title="您确定要删除该记录？" onConfirm={() =>this.handlDelete()} okText="确定" cancelText="取消">
+                    <Button icon="delete" type="danger" style={{ marginBottom: '-14px', marginTop: '-14px' }}>
+                      删除
+                    </Button>
+                  </Popconfirm>
+                }
+              >
+                <CreateForm ref={this.saveFormRef} {...parentMethods} item={item} treeData={data.list} />
+              </Card>
+            </Col>
+          </Row>
+        </Spin>
       </PageHeaderLayout>      
     );
   };
