@@ -160,30 +160,85 @@ export function isUrl(path) {
   return reg.test(path);
 }
 
-function formatterTreeSelectData(data) {
+export function formatterTreeSelect(data) {
   return data.map(dataItem => {
     const result = {
       label: dataItem.name || '',
       value: dataItem.id.toString() || '',
       key: dataItem.id || '',
-      children: formatterTreeSelectData(dataItem.children),
+      children: formatterTreeSelect(dataItem.children),
     };
     return result;
   });
 }
 
-function formatterTreeData(data) {
+export function formatterTree(data) {
   return data.map(dataItem => {
     const result = {
       title: dataItem.name || '',
       key: dataItem.id.toString() || '',
-      children: formatterTreeData(dataItem.children),
+      children: formatterTree(dataItem.children),
     };
     return result;
   });
 }
 
+export function getIdStrings(data) {
+  const result = [];
+  if (data) {
+    data.map(dataItem => {
+      result.push(dataItem.id.toString());
+      getIdStrings(data.children);
+      return result;
+    });
+  }
+  return result;
+}
 
+export function getMenuTreeData(data) {
+  const result = [];
+  if (data) {
+    data.map(dataItem => {
+      result.push({value:dataItem.id.toString(),label:dataItem.name});
+      getIdStrings(data.children);
+      return result;
+    });
+  }
+  return result;
+}
 
-export const formatterTreeSelect = data => formatterTreeSelectData(data);
-export const formatterTree = data => formatterTreeData(data);
+export function arraysEqual(a, b) {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length !== b.length) return false;
+  a.sort();
+  b.sort();
+  for (let i = 0; i < a.length; i += 1) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
+function getArrFromChildren(data) {
+  const result = [];
+  data.forEach(ele => {
+    result.push(ele);
+    ele.children.forEach(child => {
+      result.push(child);
+    });
+  });
+  return result;
+}
+
+export function getObjFromKeys(keys, objs) {
+  const result = [];
+  keys.forEach(key=>{
+    getArrFromChildren(objs).forEach(obj=>{
+      if(obj.id.toString()===key){
+        result.push(obj);
+      }
+    })
+  });
+  // result.push(keys.map(key => getArrFromChildren(objs).find(o => o.id.toString() === key)));
+  return result;
+}

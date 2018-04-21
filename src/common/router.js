@@ -96,6 +96,9 @@ export const getRouterData = app => {
     '/setting/authority': {
       component: dynamicWrapper(app, ['authority'], () => import('../routes/Setting/Authority')),
     },
+    '/setting/role': {
+      component: dynamicWrapper(app, ['role'], () => import('../routes/Setting/Role')),
+    },
     '/organization/depart': {
       component: dynamicWrapper(app, ['depart'], () => import('../routes/Organization/Depart')),
     },

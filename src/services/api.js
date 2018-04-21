@@ -69,3 +69,22 @@ export async function deleteDepart(params) {
     method: 'DELETE',
   });
 }
+
+export async function getAllRoles() {
+  return request('setting/roles', {
+    method: 'GET',
+  });
+}
+
+export async function saveRole(params) {
+  return request('setting/roles', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function deleteRole(params) {
+  return request(`setting/role/${params}`, {
+    method: 'DELETE',
+  });
+}
