@@ -4,7 +4,9 @@ export default {
   namespace: 'user',
 
   state: {
-    list: [],
+    data: {
+      list: [],
+    },
     currentUser: {},
   },
 
@@ -27,9 +29,10 @@ export default {
 
   reducers: {
     save(state, action) {
+      console.log(action.payload.data);
       return {
         ...state,
-        list: action.payload,
+        data: { list: action.payload.data },
       };
     },
     saveCurrentUser(state, action) {

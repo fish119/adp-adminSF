@@ -35,7 +35,7 @@ export default {
   },
 
   reducers: {
-    save(state, action) {
+    save(state, action) {      
       return {
         ...state,
         data: { list: action.payload.data },

@@ -176,7 +176,7 @@ export default class Authority extends PureComponent {
                   </Button>
                 }
               >
-                <Tree onSelect={this.onTreeSelect} defaultExpandAll>{this.renderTreeNodes(data.list)}</Tree>
+                <Tree onSelect={this.onTreeSelect}>{this.renderTreeNodes(data.list)}</Tree>
               </Card>
             </Col>
             <Col xl={16} lg={16} md={16} sm={24} xs={24}>
