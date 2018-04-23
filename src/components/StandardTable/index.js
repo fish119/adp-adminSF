@@ -26,7 +26,7 @@ class StandardTable extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     // clean state
-    if (nextProps.selectedRows.length === 0) {
+    if (nextProps && nextProps.selectedRows && nextProps.selectedRows.length === 0) {
       const needTotalList = initTotalList(nextProps.columns);
       this.setState({
         selectedRowKeys: [],
@@ -78,8 +78,7 @@ class StandardTable extends PureComponent {
         disabled: record.disabled,
       }),
     };
-
-    return (
+    const tableRender = this.props.onSelectRow ? (
       <div className={styles.standardTable}>
         <div className={styles.tableAlert}>
           <Alert
@@ -105,13 +104,29 @@ class StandardTable extends PureComponent {
         </div>
         <Table
           loading={loading}
-          rowKey={record => record.key?record.key:record.id}
+          rowKey={record => (record.key ? record.key : record.id)}
           rowSelection={rowSelection}
           dataSource={list}
           columns={columns}
           pagination={paginationProps}
           onChange={this.handleTableChange}
         />
+      </div>
+    ) : (
+      <div className={styles.standardTable}>
+        <Table
+          loading={loading}
+          rowKey={record => (record.key ? record.key : record.id)}
+          dataSource={list}
+          columns={columns}
+          pagination={paginationProps}
+          onChange={this.handleTableChange}
+        />
+      </div>
+    );
+    return (
+      <div>
+        {tableRender}
       </div>
     );
   }

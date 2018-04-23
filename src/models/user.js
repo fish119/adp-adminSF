@@ -6,13 +6,14 @@ export default {
   state: {
     data: {
       list: [],
+      pagination:{}
     },
     currentUser: {},
   },
 
   effects: {
-    *fetch(_, { call, put }) {
-      const response = yield call(queryUsers);
+    *fetch({ payload }, { call, put }) {
+      const response = yield call(queryUsers,payload);
       yield put({
         type: 'save',
         payload: response,
@@ -29,10 +30,9 @@ export default {
 
   reducers: {
     save(state, action) {
-      console.log(action.payload.data);
       return {
         ...state,
-        data: { list: action.payload.data },
+        data: { list: action.payload.data.content,pagination:{total:action.payload.data.totalElements,pageSize:action.payload.data.pageable.pageSize,current:action.payload.data.pageable.pageNumber+1} },
       };
     },
     saveCurrentUser(state, action) {

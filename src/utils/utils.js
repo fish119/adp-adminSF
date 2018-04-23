@@ -161,15 +161,19 @@ export function isUrl(path) {
 }
 
 export function formatterTreeSelect(data) {
-  return data.map(dataItem => {
-    const result = {
-      label: dataItem.name || '',
-      value: dataItem.id.toString() || '',
-      key: dataItem.id || '',
-      children: formatterTreeSelect(dataItem.children),
-    };
-    return result;
-  });
+  if (data && data.length > 0) {
+    return data.map(dataItem => {
+      const result = {
+        label: dataItem.name || '',
+        value: dataItem.id.toString() || '',
+        key: dataItem.id || '',
+        children: formatterTreeSelect(dataItem.children),
+      };
+      return result;
+    });
+  } else {
+    return [];
+  }
 }
 
 export function formatterTree(data) {
@@ -199,7 +203,7 @@ export function getMenuTreeData(data) {
   const result = [];
   if (data) {
     data.map(dataItem => {
-      result.push({value:dataItem.id.toString(),label:dataItem.name});
+      result.push({ value: dataItem.id.toString(), label: dataItem.name });
       getIdStrings(data.children);
       return result;
     });
@@ -232,12 +236,12 @@ function getArrFromChildren(data) {
 
 export function getObjFromKeys(keys, objs) {
   const result = [];
-  keys.forEach(key=>{
-    getArrFromChildren(objs).forEach(obj=>{
-      if(obj.id.toString()===key){
+  keys.forEach(key => {
+    getArrFromChildren(objs).forEach(obj => {
+      if (obj.id.toString() === key) {
         result.push(obj);
       }
-    })
+    });
   });
   // result.push(keys.map(key => getArrFromChildren(objs).find(o => o.id.toString() === key)));
   return result;
