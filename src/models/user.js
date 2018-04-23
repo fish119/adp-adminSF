@@ -1,4 +1,10 @@
-import { query as queryUsers, queryCurrent } from '../services/user';
+import {
+  query as queryUsers,
+  queryCurrent,
+  checkUsername as asyncCheckUsername,
+  checkNickname as asyncCheckNickname,
+  checkEmail as asyncCheckEmail,
+} from '../services/user';
 
 export default {
   namespace: 'user',
@@ -6,14 +12,14 @@ export default {
   state: {
     data: {
       list: [],
-      pagination:{}
+      pagination: {},
     },
     currentUser: {},
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryUsers,payload);
+      const response = yield call(queryUsers, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -26,13 +32,32 @@ export default {
         payload: response.user,
       });
     },
+    *checkUsername({ payload }, { call }) {
+      const response = yield call(asyncCheckUsername, payload);
+      return response;
+    },
+    *checkNickname({ payload }, { call }) {
+      const response = yield call(asyncCheckNickname, payload);
+      return response;
+    },
+    *checkEmail({ payload }, { call }) {
+      const response = yield call(asyncCheckEmail, payload);
+      return response;
+    },
   },
 
   reducers: {
     save(state, action) {
       return {
         ...state,
-        data: { list: action.payload.data.content,pagination:{total:action.payload.data.totalElements,pageSize:action.payload.data.pageable.pageSize,current:action.payload.data.pageable.pageNumber+1} },
+        data: {
+          list: action.payload.data.content,
+          pagination: {
+            total: action.payload.data.totalElements,
+            pageSize: action.payload.data.pageable.pageSize,
+            current: action.payload.data.pageable.pageNumber + 1,
+          },
+        },
       };
     },
     saveCurrentUser(state, action) {

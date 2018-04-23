@@ -35,6 +35,7 @@ const UserForm = Form.create({})(props => {
     departs,
     rolesData,
     checkUsername,
+    checkNickname,
   } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
@@ -64,6 +65,7 @@ const UserForm = Form.create({})(props => {
                   { required: true, message: '请输入用户名...' },
                   { validator: checkUsername },
                 ],
+                validateTrigger: 'onBlur',
               })(<Input placeholder="请输入" maxLength="10" />)}
             </FormItem>
           </Col>
@@ -71,6 +73,8 @@ const UserForm = Form.create({})(props => {
             <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="昵称">
               {form.getFieldDecorator('nickname', {
                 initialValue: item.nickname,
+                rules: [{ validator: checkNickname }],
+                validateTrigger: 'onBlur',
               })(<Input placeholder="请输入" maxLength="10" />)}
             </FormItem>
           </Col>
@@ -190,10 +194,39 @@ export default class User extends PureComponent {
     });
   };
   checkUsername = (rule, value, callback) => {
-    if (value === 'sa') {
-      callback();
+    if (value) {
+      this.props.dispatch({ type: 'user/checkUsername', payload: value }).then(response => {
+        if (response.data) {
+          callback();
+        }
+        callback('用户名已存在');
+      });
     } else {
-      callback('错误');
+      callback();
+    }
+  };
+  checkNickname = (rule, value, callback) => {
+    if (value) {
+      this.props.dispatch({ type: 'user/checkNickname', payload: value }).then(response => {
+        if (response.data) {
+          callback();
+        }
+        callback('昵称已存在');
+      });
+    } else {
+      callback();
+    }
+  };
+  checkEmail = (rule, value, callback) => {
+    if (value) {
+      this.props.dispatch({ type: 'user/checkEmail', payload: value }).then(response => {
+        if (response.data) {
+          callback();
+        }
+        callback('昵称已存在');
+      });
+    } else {
+      callback();
     }
   };
   renderSimpleForm(treeData) {
@@ -299,6 +332,7 @@ export default class User extends PureComponent {
     ];
     const parentMethods = {
       checkUsername: this.checkUsername,
+      checkNickname: this.checkNickname,
       handleSave: this.handleSave,
       handleModalVisible: this.handleModalVisible,
     };
