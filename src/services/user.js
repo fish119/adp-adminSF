@@ -26,3 +26,11 @@ export async function checkUsername(username) {
 export async function checkNickname(nickname) {
   return request(`api/user/checkNicknameUnique?nickname=${nickname}`, { method: 'GET' });
 }
+
+export async function checkPhone(phone) {
+  return request(`api/user/checkPhoneUnique?phone=${phone}`, { method: 'GET' });
+}
+
+export async function checkEmail(email) {
+  return request(`api/user/checkEmailUnique?email=${email}`, { method: 'GET' });
+}

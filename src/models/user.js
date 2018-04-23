@@ -3,6 +3,7 @@ import {
   queryCurrent,
   checkUsername as asyncCheckUsername,
   checkNickname as asyncCheckNickname,
+  checkPhone as asyncCheckPhone,
   checkEmail as asyncCheckEmail,
 } from '../services/user';
 
@@ -42,6 +43,10 @@ export default {
     },
     *checkEmail({ payload }, { call }) {
       const response = yield call(asyncCheckEmail, payload);
+      return response;
+    },
+    *checkPhone({ payload }, { call }) {
+      const response = yield call(asyncCheckPhone, payload);
       return response;
     },
   },

@@ -36,6 +36,8 @@ const UserForm = Form.create({})(props => {
     rolesData,
     checkUsername,
     checkNickname,
+    checkPhone,
+    checkEmail,
   } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
@@ -85,7 +87,9 @@ const UserForm = Form.create({})(props => {
                 rules: [
                   { required: true, message: '请输入手机号码...' },
                   { pattern: new RegExp(reg_phone), message: '请输入正确的手机号码' },
+                  { validator: checkPhone },
                 ],
+                validateTrigger: 'onBlur',
               })(<Input placeholder="请输入" maxLength="11" />)}
             </FormItem>
           </Col>
@@ -93,7 +97,11 @@ const UserForm = Form.create({})(props => {
             <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="email">
               {form.getFieldDecorator('email', {
                 initialValue: item.email,
-                rules: [{ pattern: new RegExp(reg_email), message: '请输入正确Email' }],
+                rules: [
+                  { pattern: new RegExp(reg_email), message: '请输入正确Email' },
+                  { validator: checkEmail },
+                ],
+                validateTrigger: 'onBlur',
               })(<Input placeholder="请输入" maxLength="50" />)}
             </FormItem>
           </Col>
@@ -217,13 +225,25 @@ export default class User extends PureComponent {
       callback();
     }
   };
+  checkPhone = (rule, value, callback) => {
+    if (value) {
+      this.props.dispatch({ type: 'user/checkPhone', payload: value }).then(response => {
+        if (response.data) {
+          callback();
+        }
+        callback('手机号码已存在');
+      });
+    } else {
+      callback();
+    }
+  };
   checkEmail = (rule, value, callback) => {
     if (value) {
       this.props.dispatch({ type: 'user/checkEmail', payload: value }).then(response => {
         if (response.data) {
           callback();
         }
-        callback('昵称已存在');
+        callback('Email已存在');
       });
     } else {
       callback();
@@ -333,6 +353,8 @@ export default class User extends PureComponent {
     const parentMethods = {
       checkUsername: this.checkUsername,
       checkNickname: this.checkNickname,
+      checkPhone: this.checkPhone,
+      checkEmail: this.checkEmail,
       handleSave: this.handleSave,
       handleModalVisible: this.handleModalVisible,
     };
