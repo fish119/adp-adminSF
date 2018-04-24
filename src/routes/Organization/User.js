@@ -17,7 +17,12 @@ import { regPhone, regEmail } from '../../utils/constant';
 import { checkUsername, checkNickname, checkPhone, checkEmail } from '../../utils/check';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { formatterTreeSelect, getIdStrings } from '../../utils/utils.js';
+import {
+  formatterTreeSelect,
+  getIdStrings,
+  arraysEqual,
+  getObjFromKeys,
+} from '../../utils/utils.js';
 import styles from '../../layouts/TableList.less';
 
 const FormItem = Form.Item;
@@ -39,8 +44,16 @@ const UserForm = Form.create({})(props => {
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
+      const newRoles = arraysEqual(fieldsValue.roles, getIdStrings(item.roles))
+        ? item.roles
+        : getObjFromKeys(fieldsValue.roles, rolesData);
+      const newDept =
+        fieldsValue.department === (item.department ? item.department.id : null)
+          ? item.department
+          : getObjFromKeys([fieldsValue.department], departs)[0];
+      const payload = { ...fieldsValue, roles: newRoles, department: newDept };
       form.resetFields();
-      handleSave(fieldsValue);
+      handleSave(payload);
     });
   };
   return (
@@ -72,7 +85,7 @@ const UserForm = Form.create({})(props => {
             <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="昵称">
               {form.getFieldDecorator('nickname', {
                 initialValue: item.nickname,
-                rules: [{ validator: testNickname }],
+                rules: [{ required: true, message: '请输入昵称...' }, { validator: testNickname }],
                 validateTrigger: 'onBlur',
               })(<Input placeholder="请输入" maxLength="10" />)}
             </FormItem>
@@ -199,18 +212,35 @@ export default class User extends PureComponent {
     });
   };
   showSuccess = () => {
-    this.handleModalVisible(false);
     message.success('操作成功');
+    this.handleModalVisible(false, Object.assign({}, newItem));
   };
   handleSave = fields => {
     this.props.dispatch({
       type: 'user/saveUser',
-      payload: { ...fields, id: this.state.item.id },
+      payload: {
+        ...fields,
+        id: this.state.item.id,
+        createTime: this.state.item.createTime,
+        updateTime: this.state.item.updateTime,
+      },
       callback: this.showSuccess,
     });
     this.setState({
       item: Object.assign({}, newItem),
     });
+  };
+  handlDelete = (record) => {
+    if(record.id){
+      this.props.dispatch({
+        type: 'user/deleteUser',
+        payload: record.id,
+        callback:this.showSuccess,
+      });
+      this.setState({
+        item: Object.assign({}, newItem),
+      });
+    }
   };
   testUserName = (rule, value, callback) => {
     checkUsername(rule, value, callback, this.state.item.id ? this.state.item.id : -1);

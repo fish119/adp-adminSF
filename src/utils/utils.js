@@ -192,7 +192,9 @@ export function getIdStrings(data) {
   if (data) {
     data.map(dataItem => {
       result.push(dataItem.id.toString());
-      getIdStrings(data.children);
+      if (data.children) {
+        getIdStrings(data.children);
+      }
       return result;
     });
   }
@@ -204,7 +206,9 @@ export function getMenuTreeData(data) {
   if (data) {
     data.map(dataItem => {
       result.push({ value: dataItem.id.toString(), label: dataItem.name });
-      getIdStrings(data.children);
+      if (data.children) {
+        getIdStrings(data.children);
+      }
       return result;
     });
   }
@@ -227,9 +231,11 @@ function getArrFromChildren(data) {
   const result = [];
   data.forEach(ele => {
     result.push(ele);
-    ele.children.forEach(child => {
-      result.push(child);
-    });
+    if (ele.children) {
+      ele.children.forEach(child => {
+        result.push(child);
+      });
+    }
   });
   return result;
 }
@@ -243,6 +249,5 @@ export function getObjFromKeys(keys, objs) {
       }
     });
   });
-  // result.push(keys.map(key => getArrFromChildren(objs).find(o => o.id.toString() === key)));
   return result;
 }

@@ -23,13 +23,13 @@ const CreateForm = Form.create({})(props => {
   };
   return (
     <Form>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限名称">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="部门名称">
         {form.getFieldDecorator('name', {
           initialValue: item.name,
-          rules: [{ required: true, message: '请输入权限名称...' }],
+          rules: [{ required: true, message: '请输入部门名称...' }],
         })(<Input placeholder="请输入" maxLength="10" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="父级权限">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="父级部门">
         {form.getFieldDecorator('pid', { initialValue: item.pid ? item.pid.toString() : null ,
         rules:[{pattern:new RegExp(`^(?!${item.id}$)`),message:'不能选择自己为父级'}]})(
           <TreeSelect
@@ -39,7 +39,7 @@ const CreateForm = Form.create({})(props => {
           />
         )}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="权限序号">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="部门序号">
         {form.getFieldDecorator('sort', { initialValue: item.sort })(<Slider />)}
       </FormItem>
       <Divider />

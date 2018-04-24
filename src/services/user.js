@@ -41,3 +41,9 @@ export async function saveUser(params) {
     body: params,
   });
 }
+
+export async function deleteUser(params) {
+  return request(`setting/user/${params}`, {
+    method: 'DELETE',
+  });
+}

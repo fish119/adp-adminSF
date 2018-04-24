@@ -65,7 +65,7 @@ export default class GlobalHeader extends PureComponent {
           {currentUser&&currentUser.nickname ? (
             <Dropdown overlay={menu}>
               <span className={`${styles.action} ${styles.account}`}>
-                <Avatar size="small" className={styles.avatar} src={`${baseImgUrl}avatar/${currentUser.avatar}`} />
+                <Avatar size="small" className={styles.avatar} src={`${baseImgUrl}avatar/${currentUser.avatar?currentUser.avatar:'avatar.png'}`} />
                 <span className={styles.name}>{currentUser.nickname}</span>
               </span>
             </Dropdown>
