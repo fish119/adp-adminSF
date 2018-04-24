@@ -10,7 +10,6 @@ import {
   Button,
   Modal,
   message,
-  Badge,
   Divider,
   TreeSelect,
 } from 'antd';
@@ -24,7 +23,19 @@ import styles from '../../layouts/TableList.less';
 const FormItem = Form.Item;
 const newItem = { username: '', nickname: '', phone: '', email: '', roles: [] };
 const UserForm = Form.create({})(props => {
-  const { modalVisible, form, handleSave, handleModalVisible, item, departs, rolesData } = props;
+  const {
+    modalVisible,
+    form,
+    handleSave,
+    handleModalVisible,
+    item,
+    departs,
+    rolesData,
+    testUserName,
+    testNickname,
+    testEmail,
+    testPhone,
+  } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -51,7 +62,7 @@ const UserForm = Form.create({})(props => {
                 initialValue: item.username,
                 rules: [
                   { required: true, message: '请输入用户名...' },
-                  { validator: checkUsername },
+                  { validator: testUserName },
                 ],
                 validateTrigger: 'onBlur',
               })(<Input placeholder="请输入" maxLength="10" />)}
@@ -61,7 +72,7 @@ const UserForm = Form.create({})(props => {
             <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="昵称">
               {form.getFieldDecorator('nickname', {
                 initialValue: item.nickname,
-                rules: [{ validator: checkNickname }],
+                rules: [{ validator: testNickname }],
                 validateTrigger: 'onBlur',
               })(<Input placeholder="请输入" maxLength="10" />)}
             </FormItem>
@@ -73,7 +84,7 @@ const UserForm = Form.create({})(props => {
                 rules: [
                   { required: true, message: '请输入手机号码...' },
                   { pattern: new RegExp(regPhone), message: '请输入正确的手机号码' },
-                  { validator: checkPhone },
+                  { validator: testPhone },
                 ],
                 validateTrigger: 'onBlur',
               })(<Input placeholder="请输入" maxLength="11" />)}
@@ -85,7 +96,7 @@ const UserForm = Form.create({})(props => {
                 initialValue: item.email,
                 rules: [
                   { pattern: new RegExp(regEmail), message: '请输入正确Email' },
-                  { validator: checkEmail },
+                  { validator: testEmail },
                 ],
                 validateTrigger: 'onBlur',
               })(<Input placeholder="请输入" maxLength="50" />)}
@@ -187,7 +198,32 @@ export default class User extends PureComponent {
       });
     });
   };
-
+  showSuccess = () => {
+    this.handleModalVisible(false);
+    message.success('操作成功');
+  };
+  handleSave = fields => {
+    this.props.dispatch({
+      type: 'user/saveUser',
+      payload: { ...fields, id: this.state.item.id },
+      callback: this.showSuccess,
+    });
+    this.setState({
+      item: Object.assign({}, newItem),
+    });
+  };
+  testUserName = (rule, value, callback) => {
+    checkUsername(rule, value, callback, this.state.item.id ? this.state.item.id : -1);
+  };
+  testNickname = (rule, value, callback) => {
+    checkNickname(rule, value, callback, this.state.item.id ? this.state.item.id : -1);
+  };
+  testEmail = (rule, value, callback) => {
+    checkEmail(rule, value, callback, this.state.item.id ? this.state.item.id : -1);
+  };
+  testPhone = (rule, value, callback) => {
+    checkPhone(rule, value, callback, this.state.item.id ? this.state.item.id : -1);
+  };
   renderSimpleForm(treeData) {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -290,10 +326,10 @@ export default class User extends PureComponent {
       },
     ];
     const parentMethods = {
-      checkUsername: this.checkUsername,
-      checkNickname: this.checkNickname,
-      checkPhone: this.checkPhone,
-      checkEmail: this.checkEmail,
+      testUserName: this.testUserName,
+      testNickname: this.testNickname,
+      testPhone: this.testPhone,
+      testEmail: this.testEmail,
       handleSave: this.handleSave,
       handleModalVisible: this.handleModalVisible,
     };

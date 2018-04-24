@@ -5,9 +5,9 @@ import {
   checkEmail as asyncCheckEmail,
 } from '../services/user';
 
-export function checkUsername(rule, value, callback) {
+export function checkUsername(rule, value, callback,id) {
   if (value) {
-    asyncCheckUsername(value).then(response => {
+    asyncCheckUsername(value,id).then(response => {
       if (response.data) {
         callback();
       } else {
@@ -18,37 +18,40 @@ export function checkUsername(rule, value, callback) {
     callback();
   }
 }
-export function checkNickname(rule, value, callback) {
+export function checkNickname(rule, value, callback,id) {
   if (value) {
-    asyncCheckNickname(value).then(response => {
+    asyncCheckNickname(value,id).then(response => {
       if (response.data) {
         callback();
+      } else {
+        callback('昵称已存在');
       }
-      callback('昵称已存在');
     });
   } else {
     callback();
   }
 }
-export function checkPhone(rule, value, callback) {
+export function checkPhone(rule, value, callback,id) {
   if (value) {
-    asyncCheckPhone(value).then(response => {
+    asyncCheckPhone(value,id).then(response => {
       if (response.data) {
         callback();
+      } else {
+        callback('手机号码已存在');
       }
-      callback('手机号码已存在');
     });
   } else {
     callback();
   }
 }
-export function checkEmail(rule, value, callback) {
+export function checkEmail(rule, value, callback,id) {
   if (value) {
-    asyncCheckEmail(value).then(response => {
+    asyncCheckEmail(value,id).then(response => {
       if (response.data) {
         callback();
+      } else {
+        callback('Email已存在');
       }
-      callback('Email已存在');
     });
   } else {
     callback();

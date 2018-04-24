@@ -19,18 +19,25 @@ export async function queryCurrent() {
   return request('setting/profile');
 }
 
-export async function checkUsername(username) {
-  return request(`api/user/checkUsernameUnique?username=${username}`, { method: 'GET' });
+export async function checkUsername(username,id) {
+  return request(`api/user/checkUsernameUnique?username=${username}&id=${id}`, { method: 'GET' });
 }
 
-export async function checkNickname(nickname) {
-  return request(`api/user/checkNicknameUnique?nickname=${nickname}`, { method: 'GET' });
+export async function checkNickname(nickname,id) {
+  return request(`api/user/checkNicknameUnique?nickname=${nickname}&id=${id}`, { method: 'GET' });
 }
 
-export async function checkPhone(phone) {
-  return request(`api/user/checkPhoneUnique?phone=${phone}`, { method: 'GET' });
+export async function checkPhone(phone,id) {
+  return request(`api/user/checkPhoneUnique?phone=${phone}&id=${id}`, { method: 'GET' });
 }
 
-export async function checkEmail(email) {
-  return request(`api/user/checkEmailUnique?email=${email}`, { method: 'GET' });
+export async function checkEmail(email,id) {
+  return request(`api/user/checkEmailUnique?email=${email}&id=${id}`, { method: 'GET' });
+}
+
+export async function saveUser(params) {
+  return request('setting/users', {
+    method: 'POST',
+    body: params,
+  });
 }

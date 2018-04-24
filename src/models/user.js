@@ -1,4 +1,4 @@
-import { query as queryUsers, queryCurrent } from '../services/user';
+import { query as queryUsers, queryCurrent ,saveUser} from '../services/user';
 
 export default {
   namespace: 'user',
@@ -25,6 +25,15 @@ export default {
         type: 'saveCurrentUser',
         payload: response.user,
       });
+    },
+    *saveUser({ payload, callback }, { call, put }) {
+      const response = yield call(saveUser, payload);
+      if (response) {
+        yield put({ type: 'save', payload: response });
+      }
+      if (callback&&response) {
+        yield callback();
+      }
     },
   },
 
