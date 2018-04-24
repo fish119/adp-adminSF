@@ -1,11 +1,4 @@
-import {
-  query as queryUsers,
-  queryCurrent,
-  checkUsername as asyncCheckUsername,
-  checkNickname as asyncCheckNickname,
-  checkPhone as asyncCheckPhone,
-  checkEmail as asyncCheckEmail,
-} from '../services/user';
+import { query as queryUsers, queryCurrent } from '../services/user';
 
 export default {
   namespace: 'user',
@@ -32,22 +25,6 @@ export default {
         type: 'saveCurrentUser',
         payload: response.user,
       });
-    },
-    *checkUsername({ payload }, { call }) {
-      const response = yield call(asyncCheckUsername, payload);
-      return response;
-    },
-    *checkNickname({ payload }, { call }) {
-      const response = yield call(asyncCheckNickname, payload);
-      return response;
-    },
-    *checkEmail({ payload }, { call }) {
-      const response = yield call(asyncCheckEmail, payload);
-      return response;
-    },
-    *checkPhone({ payload }, { call }) {
-      const response = yield call(asyncCheckPhone, payload);
-      return response;
     },
   },
 

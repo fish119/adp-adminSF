@@ -7,17 +7,15 @@ import {
   Form,
   Input,
   Popconfirm,
-  Icon,
   Button,
-  InputNumber,
-  DatePicker,
   Modal,
   message,
   Badge,
   Divider,
   TreeSelect,
 } from 'antd';
-import { reg_phone, reg_email } from '../../utils/constant';
+import { regPhone, regEmail } from '../../utils/constant';
+import { checkUsername, checkNickname, checkPhone, checkEmail } from '../../utils/check';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { formatterTreeSelect, getIdStrings } from '../../utils/utils.js';
@@ -26,19 +24,7 @@ import styles from '../../layouts/TableList.less';
 const FormItem = Form.Item;
 const newItem = { username: '', nickname: '', phone: '', email: '', roles: [] };
 const UserForm = Form.create({})(props => {
-  const {
-    modalVisible,
-    form,
-    handleSave,
-    handleModalVisible,
-    item,
-    departs,
-    rolesData,
-    checkUsername,
-    checkNickname,
-    checkPhone,
-    checkEmail,
-  } = props;
+  const { modalVisible, form, handleSave, handleModalVisible, item, departs, rolesData } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -86,7 +72,7 @@ const UserForm = Form.create({})(props => {
                 initialValue: item.phone,
                 rules: [
                   { required: true, message: '请输入手机号码...' },
-                  { pattern: new RegExp(reg_phone), message: '请输入正确的手机号码' },
+                  { pattern: new RegExp(regPhone), message: '请输入正确的手机号码' },
                   { validator: checkPhone },
                 ],
                 validateTrigger: 'onBlur',
@@ -98,7 +84,7 @@ const UserForm = Form.create({})(props => {
               {form.getFieldDecorator('email', {
                 initialValue: item.email,
                 rules: [
-                  { pattern: new RegExp(reg_email), message: '请输入正确Email' },
+                  { pattern: new RegExp(regEmail), message: '请输入正确Email' },
                   { validator: checkEmail },
                 ],
                 validateTrigger: 'onBlur',
@@ -201,54 +187,7 @@ export default class User extends PureComponent {
       });
     });
   };
-  checkUsername = (rule, value, callback) => {
-    if (value) {
-      this.props.dispatch({ type: 'user/checkUsername', payload: value }).then(response => {
-        if (response.data) {
-          callback();
-        }
-        callback('用户名已存在');
-      });
-    } else {
-      callback();
-    }
-  };
-  checkNickname = (rule, value, callback) => {
-    if (value) {
-      this.props.dispatch({ type: 'user/checkNickname', payload: value }).then(response => {
-        if (response.data) {
-          callback();
-        }
-        callback('昵称已存在');
-      });
-    } else {
-      callback();
-    }
-  };
-  checkPhone = (rule, value, callback) => {
-    if (value) {
-      this.props.dispatch({ type: 'user/checkPhone', payload: value }).then(response => {
-        if (response.data) {
-          callback();
-        }
-        callback('手机号码已存在');
-      });
-    } else {
-      callback();
-    }
-  };
-  checkEmail = (rule, value, callback) => {
-    if (value) {
-      this.props.dispatch({ type: 'user/checkEmail', payload: value }).then(response => {
-        if (response.data) {
-          callback();
-        }
-        callback('Email已存在');
-      });
-    } else {
-      callback();
-    }
-  };
+
   renderSimpleForm(treeData) {
     const { getFieldDecorator } = this.props.form;
     return (
