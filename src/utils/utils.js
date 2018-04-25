@@ -251,3 +251,21 @@ export function getObjFromKeys(keys, objs) {
   });
   return result;
 }
+
+export function getBase64(img, callback) {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result));
+  reader.readAsDataURL(img);
+}
+
+export function beforeUpload(file, message) {
+  const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'gif';
+  if (!isImg) {
+    message.error('请选择jpg、png或gif格式的图片!');
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    message.error('图片不能大于2MB!');
+  }
+  return isImg && isLt2M;
+}

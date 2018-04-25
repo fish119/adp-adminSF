@@ -1,10 +1,10 @@
 import fetch from 'dva/fetch';
-import {notification} from 'antd';
-import {routerRedux} from 'dva/router';
+import { notification } from 'antd';
+import { routerRedux } from 'dva/router';
 import store from '../index';
-import {getToken} from './authority'
+import { getToken } from './authority';
 
-const baseUrl = "http://localhost:9999/";
+const baseUrl = 'http://localhost:9999/';
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
@@ -20,14 +20,17 @@ const codeMessage = {
   500: '服务器发生错误，请检查服务器。',
   502: '网关错误。',
   503: '服务不可用，服务器暂时过载或维护。',
-  504: '网关超时。'
+  504: '网关超时。',
 };
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
   const errortext = codeMessage[response.status] || response.statusText;
-  notification.error({message: `请求错误 ${response.status}: ${response.url}`, description: errortext});
+  notification.error({
+    message: `请求错误 ${response.status}: ${response.url}`,
+    description: errortext,
+  });
   const error = new Error(errortext);
   error.name = response.status;
   error.response = response;
@@ -43,19 +46,19 @@ function checkStatus(response) {
  */
 export default function request(url, options) {
   const defaultOptions = {
-    credentials: 'include'
+    credentials: 'include',
   };
   const newOptions = {
     ...defaultOptions,
-    ...options
+    ...options,
   };
   if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
-        'Authorization':getToken(),
-        ...newOptions.headers
+        Authorization: getToken(),
+        ...newOptions.headers,
       };
       newOptions.body = JSON.stringify(newOptions.body);
     } else {
@@ -63,41 +66,56 @@ export default function request(url, options) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
-        'Authorization': getToken(),
-        ...newOptions.headers
+        Authorization: getToken(),
+        ...newOptions.headers,
       };
     }
   } else {
     newOptions.headers = {
-      'Authorization': getToken()
-    }
+      Authorization: getToken(),
+    };
   }
 
-  return fetch(baseUrl + url, newOptions).then(checkStatus).then(response => {
-    // if (newOptions.method === 'DELETE' || response.status === 204) {
-    //   return response.text();
-    // }
-    if (response.status === 204) {
-      return response.text();
-    }
-    return response.json();
-  }).catch(e => {
-    const {dispatch} = store;
-    const status = e.name;
-    if (status === 401) {
-      dispatch({type: 'login/logout'});
-      return;
-    }
-    if (status === 403) {
-      dispatch(routerRedux.push('/exception/403'));
-      return;
-    }
-    if (status <= 504 && status >= 500) {
-      dispatch(routerRedux.push('/exception/500'));
-      return null;
-    }
-    if (status >= 404 && status < 422) {
-      dispatch(routerRedux.push('/exception/404'));
-    }
-  });
+  return fetch(baseUrl + url, newOptions)
+    .then(checkStatus)
+    .then(response => {
+      // if (newOptions.method === 'DELETE' || response.status === 204) {
+      //   return response.text();
+      // }
+      if (response.status === 204) {
+        return response.text();
+      }
+      return response.json();
+    })
+    .catch(e => {
+      const { dispatch } = store;
+      const status = e.name;
+      if (status === 401) {
+        dispatch({ type: 'login/logout' });
+        return;
+      }
+      if (status === 403) {
+        dispatch(routerRedux.push('/exception/403'));
+        return;
+      }
+      if (status <= 504 && status >= 500) {
+        dispatch(routerRedux.push('/exception/500'));
+        return null;
+      }
+      if (status >= 404 && status < 422) {
+        dispatch(routerRedux.push('/exception/404'));
+      }
+    });
+}
+
+export function getBaseUrl() {
+  return baseUrl;
+}
+
+const headers = {
+  Authorization: getToken(),
+};
+
+export function getHeaders(){
+  return headers;
 }

@@ -24,6 +24,12 @@ export default {
         payload,
       });
     },
+    *changeUser({ payload }, { put }) {
+      yield put({
+        type: 'saveUser',
+        payload,
+      });
+    },
   },
 
   reducers: {
@@ -44,6 +50,12 @@ export default {
       return {
         ...state,
         userMenus: payload,
+      };
+    },
+    saveUser(state, { payload }) {
+      return {
+        ...state,
+        currentUser: payload,
       };
     },
     // saveNotices(state, { payload }) {

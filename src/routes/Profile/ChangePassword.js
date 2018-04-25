@@ -94,7 +94,7 @@ export default class ChangePassword extends PureComponent {
     const { userMenus, loading } = this.props;
     return (
       <PageHeaderLayout userMenus={userMenus}>
-        <Spin spinning={loading ? true : false}>
+        <Spin spinning={!!loading}>
           <Card bordered={false}>
             <CreateForm ref={this.saveFormRef} handleSave={this.handleSave} />
           </Card>

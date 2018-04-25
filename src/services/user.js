@@ -61,3 +61,10 @@ export async function changePassword(params) {
     body: params,
   });
 }
+
+export async function saveProfile(params) {
+  return request('setting/profile', {
+    method: 'POST',
+    body: params,
+  });
+}

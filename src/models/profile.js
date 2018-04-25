@@ -1,4 +1,4 @@
-import { changePassword } from '../services/user';
+import { changePassword, saveProfile } from '../services/user';
 
 export default {
   namespace: 'profile',
@@ -11,6 +11,12 @@ export default {
       const response = yield call(changePassword, payload);
       if (callback && response) {
         yield callback();
+      }
+    },
+    *saveProfile({ payload, callback }, { call }) {
+      const response = yield call(saveProfile, payload);
+      if (callback && response) {
+        yield callback(response);
       }
     },
   },
