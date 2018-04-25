@@ -40,6 +40,7 @@ const UserForm = Form.create({})(props => {
     testNickname,
     testEmail,
     testPhone,
+    handleSetDefaultPassword,
   } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
@@ -56,16 +57,35 @@ const UserForm = Form.create({})(props => {
       handleSave(payload);
     });
   };
+  const cancelHandle = () => {
+    handleModalVisible(false, Object.assign({}, newItem));
+  };
+  const setDefaultPassword = () => {
+    handleSetDefaultPassword();
+  };
   return (
     <Modal
       title={item != null ? '编辑用户' : '新建用户'}
       visible={modalVisible}
       onOk={okHandle}
-      onCancel={() => {
-        form.resetFields();
-        handleModalVisible(false, Object.assign({}, newItem));
-      }}
       width={650}
+      footer={[
+        <Button key="back" onClick={cancelHandle}>
+          取消
+        </Button>,
+        <Popconfirm
+          title="您确定要重置该用户的密码？"
+          onConfirm={setDefaultPassword}
+          okText="确定"
+          cancelText="取消"
+          key="setDefaultPassword"
+        >
+          <Button key="setDefaultPasswordButton">重置密码</Button>
+        </Popconfirm>,
+        <Button key="submit" type="primary" onClick={okHandle}>
+          确定
+        </Button>,
+      ]}
     >
       <Form>
         <Row>
@@ -230,15 +250,24 @@ export default class User extends PureComponent {
       item: Object.assign({}, newItem),
     });
   };
-  handlDelete = (record) => {
-    if(record.id){
+  handlDelete = record => {
+    if (record.id) {
       this.props.dispatch({
         type: 'user/deleteUser',
         payload: record.id,
-        callback:this.showSuccess,
+        callback: this.showSuccess,
       });
       this.setState({
         item: Object.assign({}, newItem),
+      });
+    }
+  };
+  handleSetDefaultPassword = () => {
+    if (this.state.item && this.state.item.id) {
+      this.props.dispatch({
+        type: 'user/setDefaultPassword',
+        payload: this.state.item.id,
+        callback: message.success('操作成功'),
       });
     }
   };
@@ -356,6 +385,7 @@ export default class User extends PureComponent {
       },
     ];
     const parentMethods = {
+      handleSetDefaultPassword: this.handleSetDefaultPassword,
       testUserName: this.testUserName,
       testNickname: this.testNickname,
       testPhone: this.testPhone,

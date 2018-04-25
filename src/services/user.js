@@ -47,3 +47,17 @@ export async function deleteUser(params) {
     method: 'DELETE',
   });
 }
+
+export async function setDefaultPassword(params) {
+  return request('setting/users/setDefaultPassword', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function changePassword(params) {
+  return request('setting/profile/changePassword', {
+    method: 'POST',
+    body: params,
+  });
+}

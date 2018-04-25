@@ -1,4 +1,10 @@
-import { query as queryUsers, queryCurrent ,saveUser,deleteUser} from '../services/user';
+import {
+  query as queryUsers,
+  queryCurrent,
+  saveUser,
+  deleteUser,
+  setDefaultPassword,
+} from '../services/user';
 
 export default {
   namespace: 'user',
@@ -31,7 +37,7 @@ export default {
       if (response) {
         yield put({ type: 'save', payload: response });
       }
-      if (callback&&response) {
+      if (callback && response) {
         yield callback();
       }
     },
@@ -40,7 +46,13 @@ export default {
       if (response) {
         yield put({ type: 'save', payload: response });
       }
-      if (callback&&response) {
+      if (callback && response) {
+        yield callback();
+      }
+    },
+    *setDefaultPassword({ payload, callback }, { call }) {
+      const response = yield call(setDefaultPassword, payload);
+      if (callback && response) {
         yield callback();
       }
     },
