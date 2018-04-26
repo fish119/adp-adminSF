@@ -37,13 +37,13 @@ const CreateForm = Form.create({})(props => {
   };
   return (
     <Form>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="部门名称">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="类别名称">
         {form.getFieldDecorator('name', {
           initialValue: item.name,
-          rules: [{ required: true, message: '请输入部门名称...' }],
+          rules: [{ required: true, message: '请输入类别名称...' }],
         })(<Input placeholder="请输入" maxLength="10" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="父级部门">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="父级类别">
         {form.getFieldDecorator('pid', {
           initialValue: item.pid ? item.pid.toString() : null,
           rules: [{ pattern: new RegExp(`^(?!${item.id}$)`), message: '不能选择自己为父级' }],
@@ -55,7 +55,7 @@ const CreateForm = Form.create({})(props => {
           />
         )}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="部门序号">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="类别序号">
         {form.getFieldDecorator('sort', { initialValue: item.sort })(<Slider />)}
       </FormItem>
       <Divider />
@@ -73,17 +73,17 @@ const CreateForm = Form.create({})(props => {
   );
 });
 
-@connect(({ global, depart, loading }) => ({
+@connect(({ global, article, loading }) => ({
   userMenus: global.userMenus,
-  depart,
-  loading: loading.models.depart,
+  article,
+  loading: loading.models.article,
 }))
-export default class Depart extends PureComponent {
+export default class Category extends PureComponent {
   state = {
     item: Object.assign({}, newItem),
   };
   componentWillMount() {
-    this.props.dispatch({ type: 'depart/fetch' });
+    this.props.dispatch({ type: 'article/fetchCategories' });
   }
   onTreeSelect = (selectedKeys, info) => {
     this.setState({
@@ -97,12 +97,15 @@ export default class Depart extends PureComponent {
     });
     this.formRef.resetFields();
   };
+  saveFormRef = formRef => {
+    this.formRef = formRef;
+  };
   showSuccess = () => {
     message.success('操作成功');
   };
   handleSave = fields => {
     this.props.dispatch({
-      type: 'depart/saveDepart',
+      type: 'article/saveCategory',
       payload: { ...fields, id: this.state.item.id },
       callback: this.showSuccess,
     });
@@ -113,7 +116,7 @@ export default class Depart extends PureComponent {
   handlDelete = () => {
     if (this.state.item.id) {
       this.props.dispatch({
-        type: 'depart/deleteDepart',
+        type: 'article/deleteCategory',
         payload: this.state.item.id,
         callback: this.showSuccess,
       });
@@ -122,27 +125,21 @@ export default class Depart extends PureComponent {
       });
     }
   };
-  saveFormRef = formRef => {
-    this.formRef = formRef;
-  };
   renderTreeNodes = data => {
     return data.map(item => {
-      if (item.children) {
+      if (item.children && !item.isDeleted) {
         return (
           <TreeNode title={item.name} key={item.id} dataRef={item}>
             {this.renderTreeNodes(item.children)}
           </TreeNode>
         );
       }
-      return <TreeNode {...item} dataRef={item} />;
+      return item.isDeleted ? null : <TreeNode {...item} dataRef={item} />;
     });
   };
   render() {
-    const { userMenus, depart: { data }, loading } = this.props;
+    const { userMenus, article: { data }, loading } = this.props;
     const { item } = this.state;
-    const parentMethods = {
-      handleSave: this.handleSave,
-    };
     return (
       <PageHeaderLayout userMenus={userMenus}>
         <Spin spinning={loading}>
@@ -151,7 +148,7 @@ export default class Depart extends PureComponent {
               <Card
                 loading={loading}
                 bordered={false}
-                title="部门列表"
+                title="类别列表"
                 extra={
                   <Button
                     icon="plus"
@@ -164,18 +161,18 @@ export default class Depart extends PureComponent {
                 }
               >
                 <Tree showLine onSelect={this.onTreeSelect} defaultExpandAll>
-                  {this.renderTreeNodes(data.list)}
+                  {this.renderTreeNodes(data.categories)}
                 </Tree>
               </Card>
             </Col>
             <Col xl={16} lg={16} md={16} sm={24} xs={24}>
               <Card
                 bordered={false}
-                title={item.id ? '编辑部门' : '新建部门'}
+                title={item.id ? '编辑类别' : '新建类别'}
                 loading={loading}
                 extra={
                   <Popconfirm
-                    title="您确定要删除该记录？"
+                    title="删除类别将删除所有子类和信息，您是否确定删除？"
                     onConfirm={() => this.handlDelete()}
                     okText="确定"
                     cancelText="取消"
@@ -192,9 +189,9 @@ export default class Depart extends PureComponent {
               >
                 <CreateForm
                   ref={this.saveFormRef}
-                  {...parentMethods}
+                  handleSave={this.handleSave}
                   item={item}
-                  treeData={data.list}
+                  treeData={data.categories}
                 />
               </Card>
             </Col>

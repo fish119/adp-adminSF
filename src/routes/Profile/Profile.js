@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
 import { Upload, Row, Col, Card, Button, Spin, Form, Input, message, Divider } from 'antd';
 import { regPhone, regEmail, baseImgUrl } from '../../utils/constant';
-import { getBase64, beforeUpload } from '../../utils/utils';
+import { beforeUpload } from '../../utils/utils';
 import { getBaseUrl, getHeaders } from '../../utils/request';
 import { checkUsername, checkNickname, checkPhone, checkEmail } from '../../utils/check';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -146,9 +145,9 @@ export default class Profile extends PureComponent {
       this.setState({ uploading: true });
     }
     if (info.file.status === 'done') {
-      if(info.file.response&&info.file.response.status==='success'){
+      if (info.file.response && info.file.response.status === 'success') {
         this.uploadSuccess(info.file.response.data);
-      }else{
+      } else {
         message.error('上传失败，请重试...');
       }
     }

@@ -162,7 +162,7 @@ export function isUrl(path) {
 
 export function formatterTreeSelect(data) {
   if (data && data.length > 0) {
-    return data.map(dataItem => {
+    return data.filter(item => !item.isDeleted).map(dataItem => {
       const result = {
         label: dataItem.name || '',
         value: dataItem.id.toString() || '',

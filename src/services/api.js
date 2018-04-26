@@ -88,3 +88,22 @@ export async function deleteRole(params) {
     method: 'DELETE',
   });
 }
+
+export async function getAllArticleCategories() {
+  return request('article/categories', {
+    method: 'GET',
+  });
+}
+
+export async function saveArticleCategory(params) {
+  return request('article/category', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function deleteArticleCategory(params) {
+  return request(`article/category/${params}`, {
+    method: 'DELETE',
+  });
+}
