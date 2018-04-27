@@ -1,18 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import {
-  Row,
-  Col,
-  Card,
-  Button,
-  Form,
-  Input,
-  Slider,
-  TreeSelect,
-  message,
-  Popconfirm,
-  Divider,
-} from 'antd';
+import { routerRedux } from 'dva/router';
+import { Row, Col, Card, Button, Form, Input, TreeSelect, Popconfirm, Divider } from 'antd';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { formatterTreeSelect } from '../../utils/utils.js';
@@ -62,6 +51,26 @@ export default class Article extends PureComponent {
       });
     });
   };
+  handleStandardTableChange = pagination => {
+    const { formValues } = this.state;
+    const params = {
+      currentPage: pagination.current - 1,
+      pageSize: pagination.pageSize,
+      ...formValues,
+    };
+    this.props.dispatch({
+      type: 'user/fetch',
+      payload: params,
+    });
+  };
+  gotoEdit=(id)=>{
+    this.props.dispatch(routerRedux.push({
+      pathname: '/article/article/edit',
+      query: {
+        id
+      }
+    }));
+  }
   renderSimpleForm(treeData) {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -96,7 +105,7 @@ export default class Article extends PureComponent {
                 icon="plus"
                 type="primary"
                 style={{ marginLeft: 8 }}
-                onClick={() => this.handleModalVisible(true, Object.assign({}, newItem))}
+                onClick={()=>this.gotoEdit(-1)}
               >
                 新增
               </Button>
@@ -113,29 +122,33 @@ export default class Article extends PureComponent {
         title: '标题',
         dataIndex: 'title',
         key: 'title',
-        align: 'center',
-      },
-      {
-        title: '副标题',
-        dataIndex: 'subTitle',
-        key: 'subTitle',
-      },
-      {
-        title: '发布日期',
-        dataIndex: 'createTime',
-        key: 'createTime',
-      },
-      {
-        title: '修改日期',
-        dataIndex: 'updateTime',
-        key: 'updateTime',
       },
       {
         title: '分类',
         dataIndex: 'category',
         key: 'category',
+        align: 'center',
         render: value => (value ? value.name : '无'),
       },
+      {
+        title: '作者',
+        dataIndex: 'author',
+        key: 'author',
+        align: 'center',
+        render: value => (value ? value.nickname : '无'),
+      },
+      {
+        title: '发布日期',
+        dataIndex: 'createTime',
+        key: 'createTime',
+        align: 'center',
+      },
+      {
+        title: '修改日期',
+        dataIndex: 'updateTime',
+        key: 'updateTime',
+        align: 'center',
+      },     
       {
         title: '操作',
         align: 'center',
@@ -144,7 +157,7 @@ export default class Article extends PureComponent {
             <Button
               type="primary"
               ghost
-              onClick={() => this.handleModalVisible(true, Object.assign({}, record))}
+              onClick={() => this.gotoEdit(record.id)}
             >
               编辑
             </Button>

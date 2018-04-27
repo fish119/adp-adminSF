@@ -46,6 +46,12 @@ export default {
         payload: response,
       });
     },
+    *saveArticleId({payload},{put}){
+      yield put({
+        type: 'setArticleid',
+        payload: payload,
+      });
+    }
   },
   reducers: {
     saveCategories(state, action) {
@@ -74,6 +80,23 @@ export default {
         ...state,
         data: dt,
       };
+    },
+    setArticleid(state, action){
+      return {
+        ...state,
+        articleid: action.payload,
+      };
+    }
+  },
+  subscriptions: {
+    setup({ history,dispatch }) {
+      return history.listen(({ pathname, query}) => {
+        if(pathname==='/article/article/edit'&&query&&query.id>0){
+          dispatch({type:'saveArticleId',payload:query.id});
+          // console.log(pathname);
+          // console.log(query);          
+        }
+      });
     },
   },
 };
