@@ -2,6 +2,7 @@ import {
   getAllArticleCategories,
   saveArticleCategory,
   deleteArticleCategory,
+  queryArticles,
 } from '../services/api';
 
 export default {
@@ -9,7 +10,10 @@ export default {
   state: {
     data: {
       categories: [],
-      articles: [],
+      articles: {
+        list: [],
+        pagination: {},
+      },
     },
   },
   effects: {
@@ -35,18 +39,40 @@ export default {
         yield callback();
       }
     },
+    *fetchArticles({ payload }, { call, put }) {
+      const response = yield call(queryArticles, payload);
+      yield put({
+        type: 'saveArticles',
+        payload: response,
+      });
+    },
   },
   reducers: {
     saveCategories(state, action) {
+      const dt = {
+        ...state.data,
+        categories: action.payload.data,
+      };
       return {
         ...state,
-        data: { categories: action.payload.data },
+        data: dt,
       };
     },
     saveArticles(state, action) {
+      const dt = {
+        ...state.data,
+        articles: {
+          list: action.payload.data.content,
+          pagination: {
+            total: action.payload.data.totalElements,
+            pageSize: action.payload.data.pageable.pageSize,
+            current: action.payload.data.pageable.pageNumber + 1,
+          },
+        },
+      };
       return {
         ...state,
-        data: { articles: action.payload.data },
+        data: dt,
       };
     },
   },

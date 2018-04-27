@@ -107,3 +107,18 @@ export async function deleteArticleCategory(params) {
     method: 'DELETE',
   });
 }
+
+export async function queryArticles(param) {
+  let url = `article/articles?currentPage=${
+    param && param.currentPage ? param.currentPage : 0
+  }&pageSize=${param && param.pageSize ? param.pageSize : 10}`;
+  if (param && param.searchStr) {
+    url += `&searchStr=${param.searchStr}`;
+  }
+  if (param && param.category) {
+    url += `&category=${param.category}`;
+  }
+  return request(url, {
+    method: 'GET',
+  });
+}
