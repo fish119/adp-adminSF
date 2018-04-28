@@ -258,7 +258,7 @@ export function getBase64(img, callback) {
   reader.readAsDataURL(img);
 }
 
-export function beforeUpload(file, message) {
+export function beforeImgUpload(file, message) {
   const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'gif';
   if (!isImg) {
     message.error('请选择jpg、png或gif格式的图片!');

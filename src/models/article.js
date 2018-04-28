@@ -3,6 +3,8 @@ import {
   saveArticleCategory,
   deleteArticleCategory,
   queryArticles,
+  geArticle,
+  saveArticle,
 } from '../services/api';
 
 export default {
@@ -14,6 +16,7 @@ export default {
         list: [],
         pagination: {},
       },
+      article: {},
     },
   },
   effects: {
@@ -46,12 +49,37 @@ export default {
         payload: response,
       });
     },
-    *saveArticleId({payload},{put}){
+    *saveArticleId({ payload }, { put }) {
       yield put({
         type: 'setArticleid',
-        payload: payload,
+        payload,
       });
-    }
+    },
+    *getArticle({ payload,callback }, { call, put }) {
+      const response = yield call(geArticle, payload);
+      if (callback && response) {
+        yield callback(response);
+      }
+      yield put({
+        type: 'saveArticle',
+        payload: response,
+      });
+    },
+    *setNewArticle({ payload }, { put }) {
+      yield put({
+        type: 'saveNewArticle',
+        payload,
+      });
+    },
+    *postArticle({ payload, callback }, { call, put }) {
+      const response = yield call(saveArticle, payload);
+      if (response) {
+        yield put({ type: 'saveArticle', payload: response });
+      }
+      if (callback && response) {
+        yield callback();
+      }
+    },
   },
   reducers: {
     saveCategories(state, action) {
@@ -81,20 +109,40 @@ export default {
         data: dt,
       };
     },
-    setArticleid(state, action){
+    setArticleid(state, action) {
       return {
         ...state,
         articleid: action.payload,
       };
-    }
+    },
+    saveArticle(state, action) {
+      const dt = {
+        ...state.data,
+        article: action.payload.data,
+      };
+      return {
+        ...state,
+        data: dt,
+      };
+    },
+    saveNewArticle(state, action) {
+      const dt = {
+        ...state.data,
+        article: action.payload,
+      };
+      return {
+        ...state,
+        data: dt,
+      };
+    },
   },
   subscriptions: {
-    setup({ history,dispatch }) {
-      return history.listen(({ pathname, query}) => {
-        if(pathname==='/article/article/edit'&&query&&query.id>0){
-          dispatch({type:'saveArticleId',payload:query.id});
-          // console.log(pathname);
-          // console.log(query);          
+    setup({ history, dispatch }) {
+      return history.listen(({ pathname, query }) => {
+        if (pathname === '/article/article/edit' && query && query.id > 0) {
+          dispatch({ type: 'saveArticleId', payload: query.id });
+        } else {
+          dispatch({ type: 'saveArticleId', payload: -1 });
         }
       });
     },

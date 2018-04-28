@@ -122,3 +122,16 @@ export async function queryArticles(param) {
     method: 'GET',
   });
 }
+
+export async function geArticle(id) {
+  return request(`article/article/${id}`, {
+    method: 'GET',
+  });
+}
+
+export async function saveArticle(params) {
+  return request('article/articles', {
+    method: 'POST',
+    body: params,
+  });
+}

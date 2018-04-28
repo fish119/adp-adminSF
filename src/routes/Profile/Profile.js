@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Upload, Row, Col, Card, Button, Spin, Form, Input, message, Divider } from 'antd';
 import { regPhone, regEmail, baseImgUrl } from '../../utils/constant';
-import { beforeUpload } from '../../utils/utils';
+import { beforeImgUpload as beforeUpload } from '../../utils/utils';
 import { getBaseUrl, getHeaders } from '../../utils/request';
 import { checkUsername, checkNickname, checkPhone, checkEmail } from '../../utils/check';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -131,7 +131,7 @@ export default class Profile extends PureComponent {
     });
   };
   uploadCheck = file => {
-    beforeUpload(file, message);
+    return beforeUpload(file, message);
   };
   uploadSuccess = () => {
     this.setState({ uploading: false });
