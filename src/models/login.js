@@ -19,18 +19,27 @@ export default {
       };
       const response = yield call(login, param);
       const atoken = response && response.token ? response.token : null;
-      yield put({
-        type: 'changeLoginStatus',
-        payload: {
-          status: 'ok',
-          currentAuthority: 'user',
-          token: atoken,
-        },
-      });
+      
       // Login successfully
       if (response && response.token) {
+        yield put({
+          type: 'changeLoginStatus',
+          payload: {
+            status: 'ok',
+            currentAuthority: 'user',
+            token: atoken,
+          },
+        });
         reloadAuthorized();
         yield put(routerRedux.push('/'));
+      }else{
+        yield put({
+          type: 'changeLoginStatus',
+          payload: {
+            status: 'error',
+            currentAuthority: 'account',
+          },
+        });
       }
     },
     *logout(_, { put }) {

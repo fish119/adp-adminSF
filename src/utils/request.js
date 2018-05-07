@@ -27,10 +27,12 @@ function checkStatus(response) {
     return response;
   }
   const errortext = codeMessage[response.status] || response.statusText;
-  notification.error({
-    message: `请求错误 ${response.status}: ${response.url}`,
-    description: errortext,
-  });
+  if (response.url.indexOf('/auth') === -1) {
+    notification.error({
+      message: `请求错误 ${response.status}: ${response.url}`,
+      description: errortext,
+    });
+  }
   const error = new Error(errortext);
   error.name = response.status;
   error.response = response;
@@ -116,6 +118,6 @@ const headers = {
   Authorization: getToken(),
 };
 
-export function getHeaders(){
+export function getHeaders() {
   return headers;
 }
