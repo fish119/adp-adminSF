@@ -168,7 +168,7 @@ export default class Menu extends PureComponent {
               <Card
                 loading={loading}
                 bordered={false}
-                title="部门列表"
+                title="菜单列表"
                 extra={
                   <Button
                     icon="plus"
@@ -186,7 +186,7 @@ export default class Menu extends PureComponent {
             <Col xl={16} lg={16} md={16} sm={24} xs={24}>
               <Card
                 bordered={false}
-                title={item.id ? '编辑部门' : '新建部门'}
+                title={item.id ? '编辑菜单' : '新建菜单'}
                 loading={loading}
                 extra={
                   <Popconfirm title="您确定要删除该记录？" onConfirm={() =>this.handlDelete()} okText="确定" cancelText="取消">
