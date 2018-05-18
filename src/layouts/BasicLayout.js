@@ -34,8 +34,10 @@ const getBreadcrumbNameMap = (menusData, routerData) => {
   const result = {};
   const childResult = {};
   for (const i of menusData) {
-    result[i.path]=i;
-    if (i.children&&i.children.length>0) {
+    if (!routerData[i.path]) {
+      result[i.path] = i;
+    }
+    if (i.children) {
       Object.assign(childResult, getBreadcrumbNameMap(i.children, routerData));
     }
   }
