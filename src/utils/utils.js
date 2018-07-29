@@ -164,7 +164,7 @@ export function formatterTreeSelect(data) {
   if (data && data.length > 0) {
     return data.filter(item => !item.isDeleted).map(dataItem => {
       const result = {
-        label: dataItem.name || '',
+        title: dataItem.name || '',
         value: dataItem.id.toString() || '',
         key: dataItem.id || '',
         children: formatterTreeSelect(dataItem.children),
@@ -205,7 +205,7 @@ export function getMenuTreeData(data) {
   const result = [];
   if (data) {
     data.map(dataItem => {
-      result.push({ value: dataItem.id.toString(), label: dataItem.name });
+      result.push({ value: dataItem.id.toString(), title: dataItem.name });
       if (data.children) {
         getIdStrings(data.children);
       }
