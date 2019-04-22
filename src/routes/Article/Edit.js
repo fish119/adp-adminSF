@@ -24,7 +24,7 @@ import {
   getBase64,
   getObjFromKeys,
 } from '../../utils/utils.js';
-import { regPhone, regEmail, baseImgUrl } from '../../utils/constant';
+import { baseImgUrl } from '../../utils/constant';
 
 const RadioGroup = Radio.Group;
 const { TextArea } = Input;
@@ -104,6 +104,7 @@ export default class Edit extends PureComponent {
           : getObjFromKeys([fieldsValue.category], this.props.article.data.categories)[0];
       const payload = {
         ...fieldsValue,
+        thumbnail: '001.pdf',
         category: newCategory,
         id: this.props.article.data.article.id,
         createTime: this.props.article.data.article.createTime,
@@ -167,14 +168,14 @@ export default class Edit extends PureComponent {
                   </FormItem>
                 </Col>
                 <Col sm={24} md={12}>
-                  <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="副标题">
+                  <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="客户编号">
                     {form.getFieldDecorator('subTitle', { initialValue: item.subTitle })(
-                      <Input placeholder="请输入副标题" maxLength="50" />
+                      <Input placeholder="请输入客户编号" maxLength="50" />
                     )}
                   </FormItem>
                 </Col>
                 <Col sm={24} md={12}>
-                  <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否置顶">
+                  <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否生效">
                     {form.getFieldDecorator('isTop', { initialValue: item.isTop })(
                       <RadioGroup>
                         <Radio value>是</Radio>
@@ -211,19 +212,19 @@ export default class Edit extends PureComponent {
                   </FormItem>
                 </Col>
                 <Col sm={24} md={12}>
-                  <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="缩略图">
+                  <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="附件">              
                     {form.getFieldDecorator('thumbnail', { initialValue: item.thumbnail })(
                       <Row>
                         <Col sm={20}>
                           <Upload
                             name="avatar"
-                            listType="picture-card"
-                            className="avatar-uploader"
+                            listType="text"
+                            // className="avatar-uploader"
                             headers={headers}
-                            showUploadList={false}
-                            action={`${baseUrl}setting/profile/setAvatar`}
-                            beforeUpload={this.uploadCheck}
-                            onChange={this.thumbnailChange}
+                            showUploadList={true}
+                            // action={`${baseUrl}setting/profile/setAvatar`}
+                            // beforeUpload={this.uploadCheck}
+                            // onChange={this.thumbnailChange}
                           >
                             {imageUrl ? (
                               <img style={{ height: '102px' }} src={imageUrl} alt="" />
@@ -231,6 +232,7 @@ export default class Edit extends PureComponent {
                               uploadButton
                             )}
                           </Upload>
+                          <a href={`${baseImgUrl}article/${item.subTitle}.pdf`}>下载</a>
                         </Col>
                         <Col sm={4}>
                           {imageUrl ? <Button onClick={this.clearThumbnail}>清除</Button> : ''}

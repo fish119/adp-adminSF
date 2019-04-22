@@ -176,6 +176,22 @@ export function formatterTreeSelect(data) {
   }
 }
 
+export function formatterStringTreeSelect(data) {
+  if (data && data.length > 0) {
+    return data.filter(item => !item.isDeleted).map(dataItem => {
+      const result = {
+        title: dataItem.name || '',
+        value: dataItem.name || '',
+        key: dataItem.name || '',
+        children: formatterStringTreeSelect(dataItem.children),
+      };
+      return result;
+    });
+  } else {
+    return [];
+  }
+}
+
 export function formatterTree(data) {
   return data.map(dataItem => {
     const result = {
@@ -259,11 +275,11 @@ export function getBase64(img, callback) {
 }
 
 export function beforeImgUpload(file, message) {
-  const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'gif';
+  const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'gif' || file.type == 'pdf';
   if (!isImg) {
-    message.error('请选择jpg、png或gif格式的图片!');
+    message.error('请选择pdf、jpg、png或gif格式的图片!');
   }
-  const isLt2M = file.size / 1024 / 1024 < 2;
+  const isLt2M = file.size / 1024 / 1024 < 20;
   if (!isLt2M) {
     message.error('图片不能大于2MB!');
   }
