@@ -1,18 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import {
-  Radio,
-  Spin,
-  Row,
-  Col,
-  Card,
-  Button,
-  Icon,
-  Form,
-  Input,
-  Divider,
-  message,
-} from 'antd';
+import { Radio, Spin, Row, Col, Card, Button, Icon, Form, Input, Divider, message } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { getBaseUrl, getHeaders } from '../../utils/request';
 import {
@@ -33,7 +21,7 @@ const newItem = {
   contact: '',
   tel: '',
   mobile: '',
-  uxCode: '',  //税号
+  uxCode: '', //税号
   bankName: '', //银行名称
   bankCode: '', //银行账号
 };
@@ -59,15 +47,13 @@ export default class Edit extends PureComponent {
       this.props.dispatch({ type: 'customer/setNewCustomer', payload: Object.assign({}, newItem) });
     }
   }
-  loadArticleSuccess = response => {
-
-  };
+  loadArticleSuccess = response => {};
   uploadCheck = file => {
     return beforeImgUpload(file, message);
   };
   showSuccess = () => {
     message.success('操作成功');
-  }
+  };
   uploadSuccess = () => {
     this.setState({ uploading: false });
     message.success('操作成功');
@@ -109,7 +95,6 @@ export default class Edit extends PureComponent {
                   <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="客户名称">
                     {form.getFieldDecorator('name', {
                       initialValue: item.name,
-
                     })(<Input placeholder="请输入名称" maxLength="40" />)}
                   </FormItem>
                 </Col>

@@ -1,10 +1,4 @@
-import {
-  getSales,
-  getSale,
-  saveSale,
-  deleteSale,
-  getCustomers,
-} from '../services/api';
+import { getSales, getSale, saveSale, deleteSale, getCustomers } from '../services/api';
 
 export default {
   namespace: 'sale',
@@ -23,7 +17,7 @@ export default {
       const response = yield call(getCustomers);
       yield put({ type: 'saveCustomers', payload: response });
     },
-    
+
     *deleteSale({ payload, callback }, { call, put }) {
       const response = yield call(deleteSale, payload);
       if (response) {

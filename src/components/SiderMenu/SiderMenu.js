@@ -133,8 +133,7 @@ export default class SiderMenu extends PureComponent {
             {childrenItems}
           </SubMenu>
         );
-      }
-      else{
+      } else {
         return <Menu.Item key={item.path}>{this.getMenuItemPath(item)}</Menu.Item>;
       }
       // return null;
@@ -162,7 +161,9 @@ export default class SiderMenu extends PureComponent {
   // Get the currently selected menu
   getSelectedMenuKeys = () => {
     const { location: { pathname } } = this.props;
-    return urlToList(pathname).map(itemPath => getMeunMatcheys(this.getFlatMenuKeys(this.props.menuData), itemPath).pop());
+    return urlToList(pathname).map(itemPath =>
+      getMeunMatcheys(this.getFlatMenuKeys(this.props.menuData), itemPath).pop()
+    );
   };
   // conversion Path
   // 转化路径

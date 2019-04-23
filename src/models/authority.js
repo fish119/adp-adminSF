@@ -19,7 +19,7 @@ export default {
       if (response) {
         yield put({ type: 'save', payload: response });
       }
-      if (callback&&response) {
+      if (callback && response) {
         yield callback();
       }
     },
@@ -28,14 +28,14 @@ export default {
       if (response) {
         yield put({ type: 'save', payload: response });
       }
-      if (callback&&response) {
+      if (callback && response) {
         yield callback();
       }
     },
   },
 
   reducers: {
-    save(state, action) {      
+    save(state, action) {
       return {
         ...state,
         data: { list: action.payload.data },

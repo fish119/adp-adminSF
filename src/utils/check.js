@@ -5,9 +5,9 @@ import {
   checkEmail as asyncCheckEmail,
 } from '../services/user';
 
-export function checkUsername(rule, value, callback,id) {
+export function checkUsername(rule, value, callback, id) {
   if (value) {
-    asyncCheckUsername(value,id).then(response => {
+    asyncCheckUsername(value, id).then(response => {
       if (response.data) {
         callback();
       } else {
@@ -18,9 +18,9 @@ export function checkUsername(rule, value, callback,id) {
     callback();
   }
 }
-export function checkNickname(rule, value, callback,id) {
+export function checkNickname(rule, value, callback, id) {
   if (value) {
-    asyncCheckNickname(value,id).then(response => {
+    asyncCheckNickname(value, id).then(response => {
       if (response.data) {
         callback();
       } else {
@@ -31,9 +31,9 @@ export function checkNickname(rule, value, callback,id) {
     callback();
   }
 }
-export function checkPhone(rule, value, callback,id) {
+export function checkPhone(rule, value, callback, id) {
   if (value) {
-    asyncCheckPhone(value,id).then(response => {
+    asyncCheckPhone(value, id).then(response => {
       if (response.data) {
         callback();
       } else {
@@ -44,9 +44,9 @@ export function checkPhone(rule, value, callback,id) {
     callback();
   }
 }
-export function checkEmail(rule, value, callback,id) {
+export function checkEmail(rule, value, callback, id) {
   if (value) {
-    asyncCheckEmail(value,id).then(response => {
+    asyncCheckEmail(value, id).then(response => {
       if (response.data) {
         callback();
       } else {

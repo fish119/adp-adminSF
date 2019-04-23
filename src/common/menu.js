@@ -10,13 +10,13 @@ function formatter(data, parentPath = '/', parentAuthority) {
       ...item,
       path,
       authority: item.authority || parentAuthority,
-      hideInMenu:item.onlySa || item.hideInMenu,
+      hideInMenu: item.onlySa || item.hideInMenu,
     };
-    if (item.children&&item.children.length>0) {
+    if (item.children && item.children.length > 0) {
       result.children = formatter(item.children, `${parentPath}${item.path}/`, item.authority);
     }
     return result;
   });
 }
 
-export const getMenuData = (menuData) => formatter(menuData);
+export const getMenuData = menuData => formatter(menuData);

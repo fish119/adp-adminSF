@@ -33,15 +33,17 @@ export default class sale extends PureComponent {
     });
   };
 
-  gotoEdit = (id) => {
-    this.props.dispatch(routerRedux.push({
-      pathname: '/sale/sale/edit',
-      query: {
-        id
-      }
-    }));
-  }
-  handlDelete = (id) => {
+  gotoEdit = id => {
+    this.props.dispatch(
+      routerRedux.push({
+        pathname: '/sale/sale/edit',
+        query: {
+          id,
+        },
+      })
+    );
+  };
+  handlDelete = id => {
     this.props.dispatch({
       type: 'sale/deleteSale',
       payload: id,
@@ -105,11 +107,7 @@ export default class sale extends PureComponent {
         align: 'center',
         render: record => (
           <Fragment>
-            <Button
-              type="primary"
-              ghost
-              onClick={() => this.gotoEdit(record.id)}
-            >
+            <Button type="primary" ghost onClick={() => this.gotoEdit(record.id)}>
               编辑
             </Button>
             <Divider type="vertical" />

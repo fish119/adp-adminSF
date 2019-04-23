@@ -19,7 +19,7 @@ export default {
       };
       const response = yield call(login, param);
       const atoken = response && response.token ? response.token : null;
-      
+
       // Login successfully
       if (response && response.token) {
         yield put({
@@ -32,7 +32,7 @@ export default {
         });
         reloadAuthorized();
         yield put(routerRedux.push('/'));
-      }else{
+      } else {
         yield put({
           type: 'changeLoginStatus',
           payload: {

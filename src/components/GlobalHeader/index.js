@@ -1,15 +1,15 @@
 import React, { PureComponent } from 'react';
-import { Menu, Icon, Spin, Dropdown, Avatar, Divider} from 'antd';
+import { Menu, Icon, Spin, Dropdown, Avatar, Divider } from 'antd';
 import Debounce from 'lodash-decorators/debounce';
 import { Link } from 'dva/router';
 import styles from './index.less';
-import {baseImgUrl} from '../../utils/constant.js'
+import { baseImgUrl } from '../../utils/constant.js';
 
 export default class GlobalHeader extends PureComponent {
   componentWillUnmount() {
-    try{
+    try {
       this.triggerResizeEvent.cancel();
-    }catch(err){
+    } catch (err) {
       return false;
     }
   }
@@ -20,24 +20,18 @@ export default class GlobalHeader extends PureComponent {
     this.triggerResizeEvent();
   };
   /* eslint-disable*/
-  @Debounce(600) 
-  triggerResizeEvent (){
+  @Debounce(600)
+  triggerResizeEvent() {
     const event = document.createEvent('HTMLEvents');
     event.initEvent('resize', true, false);
     window.dispatchEvent(event);
-  };
+  }
 
   render() {
-    const {
-      currentUser,
-      collapsed,
-      isMobile,
-      logo,
-      onMenuClick,
-    } = this.props;
+    const { currentUser, collapsed, isMobile, logo, onMenuClick } = this.props;
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-        <Menu.Item >
+        <Menu.Item>
           <Icon type="user" />个人中心
         </Menu.Item>
         <Menu.Item disabled>
@@ -49,7 +43,7 @@ export default class GlobalHeader extends PureComponent {
         </Menu.Item>
       </Menu>
     );
-    return (      
+    return (
       <div className={styles.header}>
         {isMobile && [
           <Link to="/" className={styles.logo} key="logo">
@@ -61,12 +55,19 @@ export default class GlobalHeader extends PureComponent {
           className={styles.trigger}
           type={collapsed ? 'menu-unfold' : 'menu-fold'}
           onClick={this.toggle}
-        /><span className={styles.compname}>辽宁韩诚科技发展有限公司</span>
+        />
+        <span className={styles.compname}>辽宁韩诚科技发展有限公司</span>
         <div className={styles.right}>
-          {currentUser&&currentUser.nickname ? (
+          {currentUser && currentUser.nickname ? (
             <Dropdown overlay={menu}>
               <span className={`${styles.action} ${styles.account}`}>
-                <Avatar size="small" className={styles.avatar} src={`${baseImgUrl}avatar/${currentUser.avatar?currentUser.avatar:'avatar.png'}`} />
+                <Avatar
+                  size="small"
+                  className={styles.avatar}
+                  src={`${baseImgUrl}avatar/${
+                    currentUser.avatar ? currentUser.avatar : 'avatar.png'
+                  }`}
+                />
                 <span className={styles.name}>{currentUser.nickname}</span>
               </span>
             </Dropdown>

@@ -124,11 +124,7 @@ class StandardTable extends PureComponent {
         />
       </div>
     );
-    return (
-      <div>
-        {tableRender}
-      </div>
-    );
+    return <div>{tableRender}</div>;
   }
 }
 

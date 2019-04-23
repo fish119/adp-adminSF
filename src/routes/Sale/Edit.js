@@ -14,10 +14,7 @@ import {
   TreeSelect,
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import {
-  formatterStringTreeSelect,
-  beforeImgUpload,
-} from '../../utils/utils.js';
+import { formatterStringTreeSelect, beforeImgUpload } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 const newItem = {
@@ -28,7 +25,7 @@ const newItem = {
   gdj: '',
   pdj: '',
   beginDate: '',
-  endDate: ''
+  endDate: '',
 };
 
 @connect(({ global, sale, loading }) => ({
@@ -53,15 +50,13 @@ export default class Edit extends PureComponent {
     }
     this.props.dispatch({ type: 'sale/fetchCustomers' });
   }
-  loadArticleSuccess = response => {
-
-  };
+  loadArticleSuccess = response => {};
   uploadCheck = file => {
     return beforeImgUpload(file, message);
   };
   showSuccess = () => {
     message.success('操作成功');
-  }
+  };
   uploadSuccess = () => {
     this.setState({ uploading: false });
     message.success('操作成功');
@@ -98,7 +93,7 @@ export default class Edit extends PureComponent {
         <Spin spinning={!!loading || this.state.uploading}>
           <Card bordered={false}>
             <Form>
-              <Row>               
+              <Row>
                 <Col sm={24} md={12}>
                   <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="售电编号">
                     {form.getFieldDecorator('code', { initialValue: item.code })(
@@ -107,13 +102,13 @@ export default class Edit extends PureComponent {
                   </FormItem>
                 </Col>
                 <Col sm={24} md={12}>
-                <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="客户名称">
+                  <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="客户名称">
                     {form.getFieldDecorator('customerName', {
                       rules: [{ required: true, message: '请选择客户' }],
                       initialValue: item.customerName ? item.customerName : null,
                     })(
                       <TreeSelect
-                        maxLength = "50"
+                        maxLength="50"
                         treeData={formatterStringTreeSelect(sale.data.customers)}
                         placeholder="Please select"
                         allowClear
@@ -129,7 +124,7 @@ export default class Edit extends PureComponent {
                     )}
                   </FormItem>
                 </Col>
-                
+
                 <Col sm={24} md={12}>
                   <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="峰电价">
                     {form.getFieldDecorator('fdj', { initialValue: item.fdj })(
@@ -154,14 +149,14 @@ export default class Edit extends PureComponent {
                 <Col sm={24} md={12}>
                   <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="生效日期">
                     {form.getFieldDecorator('beginDate', { initialValue: item.beginDate })(
-                      <Input format='YYYY-MM-DD' placeholder="生效日期" />
+                      <Input format="YYYY-MM-DD" placeholder="生效日期" />
                     )}
                   </FormItem>
                 </Col>
                 <Col sm={24} md={12}>
                   <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="失效日期">
                     {form.getFieldDecorator('endDate', { initialValue: item.endDate })(
-                      <Input format='YYYY-MM-DD' placeholder="失效日期" />
+                      <Input format="YYYY-MM-DD" placeholder="失效日期" />
                     )}
                   </FormItem>
                 </Col>

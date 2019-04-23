@@ -1,9 +1,4 @@
-import {
-  getCustomers,
-  getCustomer,
-  saveCustomer,
-  deleteCustomer,
-} from '../services/api';
+import { getCustomers, getCustomer, saveCustomer, deleteCustomer } from '../services/api';
 
 export default {
   namespace: 'customer',

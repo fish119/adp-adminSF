@@ -28,7 +28,7 @@ class UserLayout extends React.PureComponent {
   render() {
     const { routerData, match } = this.props;
     const containerBgStyle = {
-      backgroundImage:`url(${  loginbg  })`
+      backgroundImage: `url(${loginbg})`,
     };
     return (
       <DocumentTitle title={this.getPageTitle()}>

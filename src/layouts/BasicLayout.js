@@ -15,7 +15,7 @@ import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
 import logo from '../assets/logo.svg';
-import {pageTitle} from '../utils/constant.js'
+import { pageTitle } from '../utils/constant.js';
 
 const { Content, Header, Footer } = Layout;
 const { AuthorizedRoute, check } = Authorized;
@@ -79,13 +79,13 @@ class BasicLayout extends React.PureComponent {
     isMobile,
   };
   getChildContext() {
-    const { location, routerData,userMenus} = this.props;
+    const { location, routerData, userMenus } = this.props;
     return {
       location,
       breadcrumbNameMap: getBreadcrumbNameMap(getMenuData(userMenus), routerData),
     };
   }
-  componentWillMount(){
+  componentWillMount() {
     this.props.dispatch({
       // type: 'user/fetchCurrent',
       type: 'global/fetchIndex',
@@ -96,7 +96,7 @@ class BasicLayout extends React.PureComponent {
       this.setState({
         isMobile: mobile,
       });
-    });    
+    });
   }
   getPageTitle() {
     const { routerData, location } = this.props;
@@ -128,7 +128,7 @@ class BasicLayout extends React.PureComponent {
     return redirect;
   };
   getRedirect = item => {
-    const me = this
+    const me = this;
     if (item && item.children) {
       if (item.children[0] && item.children[0].path) {
         redirectData.push({
@@ -170,7 +170,7 @@ class BasicLayout extends React.PureComponent {
       routerData,
       match,
       location,
-    } = this.props;    
+    } = this.props;
     const bashRedirect = this.getBashRedirect();
     userMenus.forEach(this.getRedirect);
     const layout = (

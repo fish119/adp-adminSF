@@ -28,7 +28,9 @@ export default ({ className, linkElement = 'a', type, title, desc, img, actions,
               },
               <Button type="primary">返回首页</Button>
             )}
-          &nbsp;&nbsp;<Button type="primary" onClick={()=>history.go(-1)}>返回上页</Button>
+          &nbsp;&nbsp;<Button type="primary" onClick={() => history.go(-1)}>
+            返回上页
+          </Button>
         </div>
       </div>
     </div>

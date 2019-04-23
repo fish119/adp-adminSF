@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 class Analysis extends Component {
-
   render() {
     return (
       <div>
@@ -9,6 +8,6 @@ class Analysis extends Component {
       </div>
     );
   }
-};
+}
 
 export default Analysis;

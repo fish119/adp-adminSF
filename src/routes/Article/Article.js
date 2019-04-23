@@ -51,7 +51,7 @@ export default class Article extends PureComponent {
       });
     });
   };
-  handlDelete = (id) => {
+  handlDelete = id => {
     this.props.dispatch({
       type: 'article/deleteArticle',
       payload: id,
@@ -70,14 +70,16 @@ export default class Article extends PureComponent {
       payload: params,
     });
   };
-  gotoEdit = (id) => {
-    this.props.dispatch(routerRedux.push({
-      pathname: '/article/article/edit',
-      query: {
-        id
-      }
-    }));
-  }
+  gotoEdit = id => {
+    this.props.dispatch(
+      routerRedux.push({
+        pathname: '/article/article/edit',
+        query: {
+          id,
+        },
+      })
+    );
+  };
   renderSimpleForm(treeData) {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -161,11 +163,7 @@ export default class Article extends PureComponent {
         align: 'center',
         render: record => (
           <Fragment>
-            <Button
-              type="primary"
-              ghost
-              onClick={() => this.gotoEdit(record.id)}
-            >
+            <Button type="primary" ghost onClick={() => this.gotoEdit(record.id)}>
               编辑
             </Button>
             <Divider type="vertical" />

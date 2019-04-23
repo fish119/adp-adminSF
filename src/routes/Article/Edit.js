@@ -72,7 +72,7 @@ export default class Edit extends PureComponent {
   };
   showSuccess = () => {
     message.success('操作成功');
-  }
+  };
   uploadSuccess = () => {
     this.setState({ uploading: false });
     message.success('操作成功');
@@ -212,7 +212,7 @@ export default class Edit extends PureComponent {
                   </FormItem>
                 </Col>
                 <Col sm={24} md={12}>
-                  <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="附件">              
+                  <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="附件">
                     {form.getFieldDecorator('thumbnail', { initialValue: item.thumbnail })(
                       <Row>
                         <Col sm={20}>

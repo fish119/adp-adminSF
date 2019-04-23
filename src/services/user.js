@@ -19,19 +19,19 @@ export async function queryCurrent() {
   return request('setting/profile');
 }
 
-export async function checkUsername(username,id) {
+export async function checkUsername(username, id) {
   return request(`api/user/checkUsernameUnique?username=${username}&id=${id}`, { method: 'GET' });
 }
 
-export async function checkNickname(nickname,id) {
+export async function checkNickname(nickname, id) {
   return request(`api/user/checkNicknameUnique?nickname=${nickname}&id=${id}`, { method: 'GET' });
 }
 
-export async function checkPhone(phone,id) {
+export async function checkPhone(phone, id) {
   return request(`api/user/checkPhoneUnique?phone=${phone}&id=${id}`, { method: 'GET' });
 }
 
-export async function checkEmail(email,id) {
+export async function checkEmail(email, id) {
   return request(`api/user/checkEmailUnique?email=${email}&id=${id}`, { method: 'GET' });
 }
 

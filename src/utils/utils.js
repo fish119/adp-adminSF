@@ -275,7 +275,11 @@ export function getBase64(img, callback) {
 }
 
 export function beforeImgUpload(file, message) {
-  const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'gif' || file.type == 'pdf';
+  const isImg =
+    file.type === 'image/jpeg' ||
+    file.type === 'image/png' ||
+    file.type === 'gif' ||
+    file.type == 'pdf';
   if (!isImg) {
     message.error('请选择pdf、jpg、png或gif格式的图片!');
   }
