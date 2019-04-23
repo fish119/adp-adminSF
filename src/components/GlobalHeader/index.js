@@ -61,7 +61,7 @@ export default class GlobalHeader extends PureComponent {
           className={styles.trigger}
           type={collapsed ? 'menu-unfold' : 'menu-fold'}
           onClick={this.toggle}
-        />
+        /><span className={styles.compname}>辽宁韩诚科技发展有限公司</span>
         <div className={styles.right}>
           {currentUser&&currentUser.nickname ? (
             <Dropdown overlay={menu}>

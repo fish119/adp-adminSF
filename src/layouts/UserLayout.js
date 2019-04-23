@@ -11,7 +11,7 @@ import { pageTitle, pageSubTitle } from '../utils/constant';
 
 const copyright = (
   <Fragment>
-    Copyright <Icon type="copyright" /> 2018 By Fish119
+    Copyright <Icon type="copyright" /> 2018 By HC Techonlogy
   </Fragment>
 );
 

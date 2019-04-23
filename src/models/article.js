@@ -2,6 +2,7 @@ import {
   getAllArticleCategories,
   saveArticleCategory,
   deleteArticleCategory,
+  deleteArticle,
   queryArticles,
   geArticle,
   saveArticle,
@@ -42,6 +43,15 @@ export default {
         yield callback();
       }
     },
+    *deleteArticle({ payload, callback }, { call, put }) {
+      const response = yield call(deleteArticle, payload);
+      if (response) {
+        yield put({ type: 'saveArticles', payload: response });
+      }
+      if (callback && response) {
+        yield callback();
+      }
+    },
     *fetchArticles({ payload }, { call, put }) {
       const response = yield call(queryArticles, payload);
       yield put({
@@ -55,7 +65,7 @@ export default {
         payload,
       });
     },
-    *getArticle({ payload,callback }, { call, put }) {
+    *getArticle({ payload, callback }, { call, put }) {
       const response = yield call(geArticle, payload);
       if (callback && response) {
         yield callback(response);

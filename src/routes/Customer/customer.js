@@ -9,19 +9,18 @@ import styles from '../../layouts/TableList.less';
 
 const FormItem = Form.Item;
 
-@connect(({ global, article, loading }) => ({
+@connect(({ global, customer, loading }) => ({
   userMenus: global.userMenus,
-  article,
-  loading: loading.models.article,
+  customer,
+  loading: loading.models.customer,
 }))
 @Form.create()
-export default class Article extends PureComponent {
+export default class customer extends PureComponent {
   state = {
     formValues: {},
   };
   componentWillMount() {
-    this.props.dispatch({ type: 'article/fetchCategories' });
-    this.props.dispatch({ type: 'article/fetchArticles' });
+    this.props.dispatch({ type: 'customer/fetchCustomer' });
   }
   handleFormReset = () => {
     const { form, dispatch } = this.props;
@@ -30,84 +29,33 @@ export default class Article extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'article/fetchArticles',
+      type: 'customer/fetchcustomers',
       payload: {},
     });
   };
-  handleSearch = e => {
-    e.preventDefault();
-    const { dispatch, form } = this.props;
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      const values = {
-        ...fieldsValue,
-      };
-      this.setState({
-        formValues: values,
-      });
-      dispatch({
-        type: 'article/fetchArticles',
-        payload: values,
-      });
-    });
-  };
-  handlDelete = (id) => {
-    this.props.dispatch({
-      type: 'article/deleteArticle',
-      payload: id,
-      callback: this.showSuccess,
-    });
-  };
-  handleStandardTableChange = pagination => {
-    const { formValues } = this.state;
-    const params = {
-      currentPage: pagination.current - 1,
-      pageSize: pagination.pageSize,
-      ...formValues,
-    };
-    this.props.dispatch({
-      type: 'user/fetch',
-      payload: params,
-    });
-  };
+
   gotoEdit = (id) => {
     this.props.dispatch(routerRedux.push({
-      pathname: '/article/article/edit',
+      pathname: '/customer/customer/edit',
       query: {
         id
       }
     }));
   }
+  handlDelete = (id) => {
+    this.props.dispatch({
+      type: 'customer/deleteCustomer',
+      payload: id,
+      callback: this.showSuccess,
+    });
+  };
   renderSimpleForm(treeData) {
     const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={9} sm={24}>
-            <FormItem label="关键字">
-              {getFieldDecorator('searchStr')(
-                <Input placeholder="信息标识" style={{ width: 200 }} />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={7} sm={24}>
-            <FormItem label="类别">
-              {getFieldDecorator('category')(
-                <TreeSelect
-                  treeData={formatterTreeSelect(treeData)}
-                  placeholder="Please select"
-                  allowClear
-                  style={{ width: 120 }}
-                />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
+          <Col md={12} sm={24}>
             <span className={styles.submitButtons}>
-              <Button htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                重置
-              </Button>
               <Button
                 icon="plus"
                 type="primary"
@@ -123,37 +71,35 @@ export default class Article extends PureComponent {
     );
   }
   render() {
-    const { userMenus, article: { data }, loading } = this.props;
+    const { userMenus, customer: { data }, loading } = this.props;
     const columns = [
       {
-        title: '标题',
-        dataIndex: 'title',
-        key: 'title',
+        title: '编号',
+        dataIndex: 'code',
+        key: 'code',
       },
       {
-        title: '分类',
-        dataIndex: 'category',
-        key: 'category',
+        title: '名称',
+        dataIndex: 'name',
+        key: 'name',
         align: 'center',
-        render: value => (value ? value.name : '无'),
       },
-      // {
-      //   title: '作者',
-      //   dataIndex: 'author',
-      //   key: 'author',
-      //   align: 'center',
-      //   render: value => (value ? value.nickname : '无'),
-      // },
       {
-        title: '发布日期',
-        dataIndex: 'createTime',
-        key: 'createTime',
+        title: '简称',
+        dataIndex: 'shortName',
+        key: 'shortName',
+        align: 'center',
+      },
+      {
+        title: '电压等级',
+        dataIndex: 'lvl',
+        key: 'lvl',
         align: 'center',
       },
       {
         title: '修改日期',
-        dataIndex: 'updateTime',
-        key: 'updateTime',
+        dataIndex: 'createTime',
+        key: 'createTime',
         align: 'center',
       },
       {
@@ -192,7 +138,7 @@ export default class Article extends PureComponent {
             </div>
             <StandardTable
               loading={loading}
-              data={data.articles}
+              data={data.customers}
               columns={columns}
               rowKey={record => record.id}
               onChange={this.handleStandardTableChange}

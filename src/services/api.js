@@ -108,10 +108,16 @@ export async function deleteArticleCategory(params) {
   });
 }
 
+export async function deleteArticle(params) {
+  return request(`article/article/${params}`, {
+    method: 'DELETE',
+  });
+}
+
 export async function queryArticles(param) {
   let url = `article/articles?currentPage=${
     param && param.currentPage ? param.currentPage : 0
-  }&pageSize=${param && param.pageSize ? param.pageSize : 10}`;
+    }&pageSize=${param && param.pageSize ? param.pageSize : 10}`;
   if (param && param.searchStr) {
     url += `&searchStr=${param.searchStr}`;
   }
@@ -133,5 +139,56 @@ export async function saveArticle(params) {
   return request('article/articles', {
     method: 'POST',
     body: params,
+  });
+}
+
+export async function getCustomers() {
+  return request(`customer/customers`, {
+    method: 'GET',
+  });
+}
+
+export async function getCustomer(id) {
+  return request(`customer/customer/${id}`, {
+    method: 'GET',
+  });
+}
+
+export async function saveCustomer(params) {
+  return request('customer/customers', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function deleteCustomer(params) {
+  return request(`customer/customer/${params}`, {
+    method: 'DELETE',
+  });
+}
+
+//Sale
+export async function getSales() {
+  return request(`sale/sales`, {
+    method: 'GET',
+  });
+}
+
+export async function getSale(id) {
+  return request(`sale/sale/${id}`, {
+    method: 'GET',
+  });
+}
+
+export async function saveSale(params) {
+  return request('sale/sales', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function deleteSale(params) {
+  return request(`sale/sales/${params}`, {
+    method: 'DELETE',
   });
 }
